@@ -35,7 +35,7 @@ class TlpPortfolioElementorWidget extends \Elementor\Widget_Base
                 'type'    => \Elementor\Controls_Manager::SELECT2,
                 'id'      => 'layout',
                 'label'   => __('Layout', 'tlp-portfolio'),
-                'options' => $TLPportfolio->scLayouts()
+                'options' => $TLPportfolio->oldScLayouts()
             )
         );
         $this->add_control(

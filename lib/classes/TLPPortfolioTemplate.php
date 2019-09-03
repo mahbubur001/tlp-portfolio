@@ -21,7 +21,7 @@ if(!class_exists('TLPPortfolioTemplate')):
 
                 $file 	= 'single-portfolio.php';
                 $find[] = $file;
-                $find[] = $TLPportfolio->templatePath . $file;
+                $find[] = $TLPportfolio->templatesPath . $file;
 
             }
 
@@ -29,7 +29,7 @@ if(!class_exists('TLPPortfolioTemplate')):
 
                 $template = locate_template( array_unique( $find ) );
                 if ( ! $template ) {
-                    $template = $TLPportfolio->templatePath  . $file;
+                    $template = $TLPportfolio->templatesPath  . $file;
                 }
             }
 

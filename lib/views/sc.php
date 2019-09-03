@@ -15,7 +15,7 @@
                                 <div class="scg-field">
                                     <select name="layout">
 										<?php
-										$layouts = $TLPportfolio->scLayouts();
+										$layouts = $TLPportfolio->oldScLayouts();
 										foreach ( $layouts as $key => $layout ) {
 											echo "<option value={$key}>$layout</option>";
 										}

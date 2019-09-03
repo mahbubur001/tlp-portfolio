@@ -12,6 +12,16 @@ if ( ! class_exists( 'TLPportSettings' ) ):
 			add_action( 'wp_ajax_tlpPortSettings', array( $this, 'tlpPortSettings' ) );
 			add_filter( 'plugin_action_links_' . TLP_PORTFOLIO_PLUGIN_ACTIVE_FILE_NAME,
 				array( $this, 'tlp_portfolio_marketing' ) );
+			add_action( 'admin_notices', array( $this, 'deprecated_admin_notice' ) );
+		}
+
+		function deprecated_admin_notice() {
+			$screen = get_current_screen();
+			if ( isset( $screen->post_type ) && ( $screen->post_type == TLPPortfolio()->post_type || $screen->post_type == TLPPortfolio()->getScPostType() ) ) {
+				$class   = 'notice notice-error is-dismissible';
+				$message = sprintf( __( 'Our old ShortCode generator is now deprecated, This will be removed end of the year 2019. You should use our latest <a href="%s">ShortCode Generator.</a>', 'tlp-team' ), admin_url( 'edit.php?post_type=' . TLPPortfolio()->getScPostType() ) );
+				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message );
+			}
 		}
 
 		function tlp_portfolio_marketing( $links ) {
@@ -61,7 +71,7 @@ if ( ! class_exists( 'TLPportSettings' ) ):
 		 */
 		function tlp_menu_register() {
 			$sc   = add_submenu_page( 'edit.php?post_type=portfolio', __( 'Shortcode generator', 'tlp-portfolio' ),
-				__( 'ShortCode', 'tlp-portfolio' ), 'administrator', 'tlp_portfolio_sc',
+				__( 'ShortCode (Deprecated)', 'tlp-portfolio' ), 'administrator', 'tlp_portfolio_sc',
 				array( $this, 'tlp_portfolio_sc' ) );
 			$page = add_submenu_page( 'edit.php?post_type=portfolio', __( 'TLP Portfolio Settings', 'tlp-portfolio' ),
 				__( 'Settings', 'tlp-portfolio' ), 'administrator', 'tlp_portfolio_settings',
@@ -77,30 +87,24 @@ if ( ! class_exists( 'TLPportSettings' ) ):
 		 *  Portfolio style
 		 */
 		function tlp_style() {
-			global $TLPportfolio;
-			wp_enqueue_style( 'tlpport-setting-css', $TLPportfolio->assetsUrl . 'css/settings.css' );
+			wp_enqueue_style( 'tlp-portfolio-admin' );
 		}
 
 		function tlp_script() {
-			global $TLPportfolio;
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_script( 'tlpport-setting-js', $TLPportfolio->assetsUrl . 'js/settings.js',
-				array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ), '', true );
-			$nonce = wp_create_nonce( $TLPportfolio->nonceText() );
-			wp_localize_script( 'tlpport-setting-js', 'tpl_port_var', array( 'tlp_nonce' => $nonce ) );
+			wp_enqueue_script( array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker', 'tlp-portfolio-admin' ) );
+			wp_localize_script( 'tlp-portfolio-admin', 'tpl_port_var', array( 'tlp_nonce' => wp_create_nonce( TLPPortfolio()->nonceText() ) ) );
 		}
 
 		/**
 		 *  Render settings view
 		 */
 		function tlp_portfolio_settings() {
-			global $TLPportfolio;
-			$TLPportfolio->render( 'settings' );
+			TLPPortfolio()->render_view( 'settings' );
 		}
 
 		function tlp_portfolio_sc() {
-			global $TLPportfolio;
-			$TLPportfolio->render( 'sc' );
+			TLPPortfolio()->render_view( 'sc' );
 		}
 
 		public function tlp_portfolio_load_text_domain() {

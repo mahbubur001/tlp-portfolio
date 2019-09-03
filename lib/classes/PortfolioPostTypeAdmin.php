@@ -8,6 +8,7 @@ if(!class_exists('PortfolioPostTypeAdmin')):
 	class PortfolioPostTypeAdmin
 	{
 		public $post_type = 'portfolio';
+		public $sc_post_type = 'portfolio-sc';
 
 		function __construct()
 		{
@@ -17,6 +18,23 @@ if(!class_exists('PortfolioPostTypeAdmin')):
 			add_filter( 'manage_edit-'.$this->post_type.'_columns', array($this, 'arrange_portfolio_columns'));
 			add_action( 'manage_'.$this->post_type.'_posts_custom_column', array($this,'manage_portfolio_columns'), 10, 2);
 			add_action( 'restrict_manage_posts', array( $this, 'add_taxonomy_filters' ) );
+
+			add_filter( 'manage_edit-'.$this->sc_post_type.'_columns', array($this, 'arrange_portfolio_sc_columns'));
+			add_action( 'manage_'.$this->sc_post_type.'_posts_custom_column', array($this,'manage_portfolio_sc_columns'), 10, 2);
+		}
+
+		public function arrange_portfolio_sc_columns( $columns ) {
+			$shortcode = array( 'shortcode' => __( 'TLP Portfolio ShortCode', "tlp-portfolio" ) );
+			return array_slice( $columns, 0, 2, true ) + $shortcode + array_slice( $columns, 1, null, true );
+		}
+		public function manage_portfolio_sc_columns( $column ) {
+			switch ( $column ) {
+				case 'shortcode':
+					echo '<input type="text" onfocus="this.select();" readonly="readonly" value="[tlpportfolio id=&quot;'.get_the_ID().'&quot; title=&quot;'.get_the_title().'&quot;]" class="large-text code tlp-code-sc">';
+					break;
+				default:
+					break;
+			}
 		}
 
 

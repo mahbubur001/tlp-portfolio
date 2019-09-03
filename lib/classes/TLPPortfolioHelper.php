@@ -4,18 +4,87 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
 	class TLPPortfolioHelper {
 
 		function verifyNonce() {
-			global $TLPportfolio;
-			$nonce     = ! empty( $_REQUEST['tlp_nonce'] ) ? $_REQUEST['tlp_nonce'] : null;
-			$nonceText = $TLPportfolio->nonceText();
-			if ( ! wp_verify_nonce( $nonce, $nonceText ) ) {
-				die( 'Security check' );
+			$nonce     = isset( $_REQUEST['tlp_nonce'] ) && ! empty( $_REQUEST['tlp_nonce'] ) ? $_REQUEST['tlp_nonce'] : null;
+			$nonceText = $this->nonceText();
+			if ( wp_verify_nonce( $nonce, $nonceText ) ) {
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		function nonceText() {
 			return "tlp_portfolio_nonce";
+		}
+
+
+		function meta_exist($post_id, $meta_key, $type = "post") {
+			if (!$post_id) {
+				return false;
+			}
+
+			return metadata_exists($type, $post_id, $meta_key);
+		}
+		/**
+		 * @return string
+		 * Remove select2Js confection
+		 */
+		function getSelect2JsId() {
+			$select2Id = 'tlp-select2';
+			if ( class_exists( 'WPSEO_Admin_Asset_Manager' ) && class_exists( 'Avada' ) ) {
+				$select2Id = 'yoast-seo-select2';
+			} elseif ( class_exists( 'WPSEO_Admin_Asset_Manager' ) ) {
+				$select2Id = 'yoast-seo-select2';
+			} elseif ( class_exists( 'Avada' ) ) {
+				$select2Id = 'select2-avada-js';
+			}
+
+			return $select2Id;
+		}
+
+		function pfpScMetaFields() {
+			return array_merge(
+				TLPPortfolio()->scLayoutMetaFields(),
+				TLPPortfolio()->scFilterMetaFields(),
+				TLPPortfolio()->scStyleFields()
+			);
+		}
+
+		function rtFieldGenerator( $fields = array() ) {
+			$html = null;
+			if ( is_array( $fields ) && ! empty( $fields ) ) {
+				$PFProField = new TlpPortfolioField();
+				foreach ( $fields as $fieldKey => $field ) {
+					$html .= $PFProField->Field( $fieldKey, $field );
+				}
+			}
+
+			return $html;
+		}
+
+		function getAllPortFolioCategoryList() {
+			$terms    = array();
+			$termList = get_terms( array( TLPPortfolio()->taxonomies['category'] ), array( 'hide_empty' => 0 ) );
+			if ( is_array( $termList ) && ! empty( $termList ) && empty( $termList['errors'] ) ) {
+				foreach ( $termList as $term ) {
+					$terms[ $term->term_id ] = $term->name;
+				}
+			}
+
+			return $terms;
+		}
+
+
+		function getAllPortFolioTagList() {
+			$terms = array();
+			$termList = get_terms(array(TLPPortfolio()->taxonomies['tag']), array('hide_empty' => 0));
+			if (is_array($termList) && !empty($termList) && empty($termList['errors'])) {
+				foreach ($termList as $term) {
+					$terms[$term->term_id] = $term->name;
+				}
+			}
+
+			return $terms;
 		}
 
 		function get_image_sizes() {
@@ -45,7 +114,7 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
 					$imgSize[ $key ] = ucfirst( $key ) . " ({$img['width']}*{$img['height']})";
 				}
 			}
-			$imgSize['rt_custom'] = "Custom image size";
+			$imgSize['rt_custom'] = __( "Custom image size", "tlp-portfolio" );
 
 			return $imgSize;
 		}
@@ -76,23 +145,98 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
 			return $imgSrc;
 		}
 
-		function rtImageReSize( $url, $width = null, $height = null, $crop = null, $single = true, $upscale = false ) {
-			$rtResize = new TLPPortfolioReSizer();
+		function rtImageReSize($url, $width = null, $height = null, $crop = null, $single = true, $upscale = false) {
+			$rtResize = new PFProReSizer();
 
-			return $rtResize->process( $url, $width, $height, $crop, $single, $upscale );
+			return $rtResize->process($url, $width, $height, $crop, $single, $upscale);
 		}
 
-		function getAllPortFolioCategoryList() {
-			global $TLPportfolio;
-			$terms    = array();
-			$termList = get_terms( array( $TLPportfolio->taxonomies['category'] ), array( 'hide_empty' => 0 ) );
-			if ( is_array( $termList ) && ! empty( $termList ) && empty( $termList['errors'] ) ) {
-				foreach ( $termList as $term ) {
-					$terms[ $term->term_id ] = $term->name;
+
+
+		/**
+		 * Sanitize field value
+		 *
+		 * @param array $field
+		 * @param null  $value
+		 *
+		 * @return array|null
+		 * @internal param $value
+		 */
+		function sanitize($field = array(), $value = null) {
+			$newValue = null;
+			if (is_array($field)) {
+				$type = (!empty($field['type']) ? $field['type'] : 'text');
+				if (empty($field['multiple'])) {
+					if ($type == 'text' || $type == 'number' || $type == 'select' || $type == 'checkbox' || $type == 'radio') {
+						$newValue = sanitize_text_field($value);
+					} else if ($type == 'price') {
+						$newValue = ('' === $value) ? '' : FMP()->format_decimal($value);
+					} else if ($type == 'url') {
+						$newValue = esc_url($value);
+					} else if ($type == 'slug') {
+						$newValue = sanitize_title_with_dashes($value);
+					} else if ($type == 'textarea') {
+						$newValue = wp_kses_post($value);
+					} else if ($type == 'custom_css') {
+						$newValue = htmlentities(stripslashes($value));
+					} else if ($type == 'colorpicker') {
+						$newValue = $this->sanitize_hex_color($value);
+					} else if ($type == 'image_size') {
+						$newValue = array();
+						foreach ($value as $k => $v) {
+							$newValue[$k] = esc_attr($v);
+						}
+					} else if ($type == 'style') {
+						$newValue = array();
+						foreach ($value as $k => $v) {
+							if ($k == 'color') {
+								$newValue[$k] = $this->sanitize_hex_color($v);
+							} else {
+								$newValue[$k] = $this->sanitize(array('type' => 'text'), $v);
+							}
+						}
+					} else {
+						$newValue = sanitize_text_field($value);
+					}
+
+				} else {
+					$newValue = array();
+					if (!empty($value)) {
+						if (is_array($value)) {
+							foreach ($value as $key => $val) {
+								if ($type == 'style' && $key == 0) {
+									if (function_exists('sanitize_hex_color')) {
+										$newValue = sanitize_hex_color($val);
+									} else {
+										$newValue[] = $this->sanitize_hex_color($val);
+									}
+								} else {
+									$newValue[] = sanitize_text_field($val);
+								}
+							}
+						} else {
+							$newValue[] = sanitize_text_field($value);
+						}
+					}
 				}
 			}
 
-			return $terms;
+			return $newValue;
+		}
+
+		function sanitize_hex_color($color) {
+			if (function_exists('sanitize_hex_color')) {
+				return sanitize_hex_color($color);
+			} else {
+				if ('' === $color) {
+					return '';
+				}
+
+				// 3 or 6 hex digits, or the empty string.
+				if (preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $color)) {
+					return $color;
+				}
+			}
 		}
 
 		function TLPhex2rgba( $color, $opacity = false ) {

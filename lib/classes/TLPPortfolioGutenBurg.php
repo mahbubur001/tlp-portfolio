@@ -87,25 +87,24 @@ if (!class_exists('TLPPortfolioGutenBurg')):
         }
 
         function block_editor_assets() {
-            global $TLPportfolio;
             // Scripts.
             wp_enqueue_script(
                 'rt-tlp-portfolio-gb-block-js',
-                $TLPportfolio->assetsUrl . "js/tlp-portfolio-blocks.min.js",
+                TLPportfolio()->assetsUrl . "js/tlp-portfolio-blocks.min.js",
                 array('wp-blocks', 'wp-i18n', 'wp-element'),
                 $this->version,
                 true
             );
             wp_localize_script('rt-tlp-portfolio-gb-block-js', 'tlpPortfolio', array(
-                'layout'      => $TLPportfolio->scLayouts(),
-                'column'      => $TLPportfolio->scColumns(),
-                'orderby'     => $TLPportfolio->scOrderBy(),
-                'order'       => $TLPportfolio->scOrder(),
-                'alignments'  => $TLPportfolio->scAlignment(),
-                'fontWeights' => $TLPportfolio->scTextWeight(),
-                'fontSizes'   => $TLPportfolio->scFontSize(),
-                'cats'        => $TLPportfolio->getAllPortFolioCategoryList(),
-                'icon'        => $TLPportfolio->assetsUrl . 'images/portfolio.png',
+                'layout'      => TLPportfolio()->oldScLayouts(),
+                'column'      => TLPportfolio()->scColumns(),
+                'orderby'     => TLPportfolio()->scOrderBy(),
+                'order'       => TLPportfolio()->scOrder(),
+                'alignments'  => TLPportfolio()->scAlignment(),
+                'fontWeights' => TLPportfolio()->scTextWeight(),
+                'fontSizes'   => TLPportfolio()->scFontSize(),
+                'cats'        => TLPportfolio()->getAllPortFolioCategoryList(),
+                'icon'        => TLPportfolio()->assetsUrl . 'images/portfolio.png',
             ));
             wp_enqueue_style('wp-edit-blocks');
         }

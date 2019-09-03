@@ -1,8 +1,8 @@
 <?php
-if ( ! class_exists( 'TLPportfolio' ) ):
+if ( ! class_exists( 'TLPPortfolio' ) ):
 
 
-	class TLPportfolio {
+	class TLPPortfolio {
 
 		public $options;
 		public $post_type_slug;
@@ -30,6 +30,7 @@ if ( ! class_exists( 'TLPportfolio' ) ):
 			);
 
 			$this->post_type      = 'portfolio';
+			$this->sc_post_type   = 'portfolio-sc';
 			$settings             = get_option( $this->options['settings'] );
 			$this->post_type_slug = isset( $settings['slug'] ) ? ( $settings['slug'] ? sanitize_title_with_dashes( $settings['slug'] ) : 'portfolio' ) : 'portfolio';
 			$this->taxonomies     = array(
@@ -43,7 +44,8 @@ if ( ! class_exists( 'TLPportfolio' ) ):
 			$this->widgetsPath    = $this->incPath . '/widgets/';
 			$this->viewsPath      = $this->incPath . '/views/';
 			$this->assetsUrl      = TLP_PORTFOLIO_PLUGIN_URL . '/assets/';
-			$this->templatePath   = $this->incPath . '/template/';
+			$this->templatesPath  = $this->incPath . '/templates/';
+
 
 			$this->TLPLoadModel( $this->modelsPath );
 			$this->TPLloadClass( $this->classesPath );
@@ -121,20 +123,63 @@ if ( ! class_exists( 'TLPportfolio' ) ):
 			}
 		}
 
-		function render( $viewName, $args = array() ) {
-			global $TLPportfolio;
 
-			$viewPath = $TLPportfolio->viewsPath . $viewName . '.php';
+		/**
+		 * @param       $viewName
+		 * @param array $args
+		 * @param bool  $return
+		 *
+		 * @return string|void
+		 */
+		function render_view( $viewName, $args = array(), $return = false ) {
+			$path     = str_replace( ".", "/", $viewName );
+			$viewPath = $this->viewsPath . $path . '.php';
 			if ( ! file_exists( $viewPath ) ) {
 				return;
 			}
-
 			if ( $args ) {
 				extract( $args );
 			}
-			$pageReturn = include $viewPath;
-			if ( $pageReturn AND $pageReturn <> 1 ) {
-				return $pageReturn;
+			if ( $return ) {
+				ob_start();
+				include $viewPath;
+
+				return ob_get_clean();
+			}
+			include $viewPath;
+		}
+
+
+		/**
+		 * @param       $viewName
+		 * @param array $args
+		 * @param bool  $return
+		 *
+		 * @return string|void
+		 */
+		function render( $viewName, $args = array(), $return = false ) {
+
+			$path = str_replace( ".", "/", $viewName );
+			if ( $args ) {
+				extract( $args );
+			}
+			$template = array(
+				"tlp-portfolio/{$path}.php"
+			);
+
+			if ( ! $template_file = locate_template( $template ) ) {
+				$template_file = $this->templatesPath . $viewName . '.php';
+			}
+			if ( ! file_exists( $template_file ) ) {
+				return;
+			}
+			if ( $return ) {
+				ob_start();
+				include $template_file;
+
+				return ob_get_clean();
+			} else {
+				include $template_file;
 			}
 		}
 
@@ -169,17 +214,31 @@ if ( ! class_exists( 'TLPportfolio' ) ):
 		}
 
 		private function insertDefaultData() {
-			global $TLPportfolio;
-			update_option( $TLPportfolio->options['installed_version'], $TLPportfolio->options['version'] );
-			if ( ! get_option( $TLPportfolio->options['settings'] ) ) {
-				update_option( $TLPportfolio->options['settings'], $TLPportfolio->defaultSettings );
+			update_option( TLPPortfolio()->options['installed_version'], TLPPortfolio()->options['version'] );
+			if ( ! get_option( TLPPortfolio()->options['settings'] ) ) {
+				update_option( TLPPortfolio()->options['settings'], TLPPortfolio()->defaultSettings );
 			}
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getScPostType() {
+			return $this->sc_post_type;
 		}
 	}
 
-endif;
 
-global $TLPportfolio;
-if ( ! is_object( $TLPportfolio ) ) {
-	$TLPportfolio = new TLPportfolio;
-}
+	/**
+	 * @return TLPPortfolio
+	 */
+	function TLPPortfolio() {
+		global $TLPportfolio;
+		$TLPportfolio = TLPPortfolio::instance();
+
+		return $TLPportfolio;
+	}
+
+	TLPPortfolio();
+
+endif;
