@@ -163,6 +163,7 @@ if ( ! class_exists( 'TLPPortfolioSCMeta' ) ):
 			wp_enqueue_script( array(
 				'jquery',
 				'wp-color-picker',
+				'tlp-magnific',
 				TLPPortfolio()->getSelect2JsId(),
 				'tlp-owl-carousel',
 				'tlp-isotope',
@@ -181,7 +182,7 @@ if ( ! class_exists( 'TLPPortfolioSCMeta' ) ):
 				'tlp-portfolio-admin',
 			) );
 
-			wp_localize_script( 'tlp-portfolio-admin', 'tlp_portfolio_js', array(
+			wp_localize_script( 'tlp-portfolio-admin', 'tlp_portfolio_obj', array(
 				'ajaxurl' => admin_url( 'admin-ajax.php ' ),
 				'nonce'   => wp_create_nonce( TLPPortfolio()->nonceText() ),
 				'nonceId' => TLPPortfolio()->nonceId()

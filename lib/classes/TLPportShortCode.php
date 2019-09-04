@@ -1,382 +1,679 @@
 <?php
 
-if ( ! class_exists( 'TLPportShortCode' ) ):
+if (!class_exists('TLPportShortCode')):
 
-	/**
-	 *
-	 */
-	class TLPportShortCode {
+    /**
+     *
+     */
+    class TLPportShortCode
+    {
 
-		function __construct() {
-			add_shortcode( 'tlpportfolio', array( $this, 'portfolio_shortcode' ) );
-		}
+        function __construct() {
+            add_shortcode('tlpportfolio', array($this, 'portfolio_shortcode'));
+            add_action('wp_ajax_tlp_portfolio_preview_ajax_call', array($this, 'portfolio_shortcode'));
+        }
 
-		function portfolio_shortcode( $atts, $content = "" ) {
-			wp_enqueue_style( array(
-				'tlp-fontawsome'
-			) );
-			wp_enqueue_script( array(
-				'tlp-magnific',
-				'tlp-isotope',
-				'tlp-owl-carousel',
-				'tlp-portfolio'
-			) );
+        private function load_scripts() {
+            wp_enqueue_style(array(
+                'tlp-fontawsome'
+            ));
+            wp_enqueue_script(array(
+                'tlp-magnific',
+                'tlp-isotope',
+                'tlp-owl-carousel',
+                'tlp-portfolio'
+            ));
+        }
 
-			$atts = shortcode_atts( array(
-				'orderby'                => 'date',
-				'order'                  => 'DESC',
-				'image'                  => 'true',
-				'number'                 => - 1,
-				'col'                    => 3,
-				'layout'                 => 1,
-				'letter-limit'           => 0,
-				'cat'                    => null,
-				'title-color'            => null,
-				'title-font-size'        => null,
-				'title-font-weight'      => null,
-				'title-alignment'        => null,
-				'short-desc-color'       => null,
-				'short-desc-font-size'   => null,
-				'short-desc-font-weight' => null,
-				'short-desc-alignment'   => null,
-				'class'                  => null
-			), $atts, 'tlpportfolio' );
+        function portfolio_shortcode($atts, $content = "") {
 
-			$atts['image'] = 'true' === $atts['image'];
-			$limit         = $atts['letter-limit'] ? absint( $atts['letter-limit'] ) : 0;
-			if ( ! in_array( $atts['col'], array_keys( TLPPortfolio()->scColumns() ) ) ) {
-				$atts['col'] = 3;
-			}
-			if ( ! in_array( $atts['layout'], array_keys( TLPPortfolio()->oldScLayouts() ) ) ) {
-				$atts['layout'] = 1;
-			}
-			$grid = $atts['col'] == 5 ? '24' : 12 / $atts['col'];
-			if ( $atts['col'] == 2 ) {
-				$image_area   = "tlp-col-lg-5 tlp-col-md-5 tlp-col-sm-6 tlp-col-xs-12 ";
-				$content_area = "tlp-col-lg-7 tlp-col-md-7 tlp-col-sm-6 tlp-col-xs-12 ";
-			} else {
-				$image_area   = "tlp-col-lg-3 tlp-col-md-3 tlp-col-sm-6 tlp-col-xs-12 ";
-				$content_area = "tlp-col-lg-9 tlp-col-md-9 tlp-col-sm-6 tlp-col-xs-12 ";
-			}
-
-			$html = null;
-			$rand = rand( 1, 10 );
-			$args = array(
-				'post_type'      => TLPPortfolio()->post_type,
-				'post_status'    => 'publish',
-				'posts_per_page' => $atts['number'],
-				'orderby'        => $atts['orderby'],
-				'order'          => $atts['order']
-			);
-			if ( is_user_logged_in() && is_super_admin() ) {
-				$args['post_status'] = array( 'publish', 'private' );
-			}
-			$cat_ids = array();
-			if ( ! empty( $atts['cat'] ) ) {
-				$cat_ids           = explode( ",", $atts['cat'] );
-				$args['tax_query'] = array(
-					array(
-						'taxonomy' => TLPPortfolio()->taxonomies['category'],
-						'field'    => 'term_id',
-						'terms'    => $cat_ids,
-						'operator' => 'IN'
-					),
-				);
-			}
-			$settings      = get_option( TLPPortfolio()->options['settings'] );
-			$fImgSize      = ! empty( $settings['feature_img_size'] ) ? $settings['feature_img_size'] : TLPPortfolio()->options['tlp-portfolio-thumb'];
-			$customImgSize = ! empty( $settings['rt_custom_img_size'] ) ? $settings['rt_custom_img_size'] : array();
-
-			$teamQuery = new WP_Query( $args );
-			$layoutID  = "tlp-portfolio-container-" . mt_rand();
-			$class     = array(
-				'rt-container-fluid',
-				'tlp-portfolio'
-			);
-			if ( ! empty( $atts['class'] ) ) {
-				$class[] = $atts['class'];
-			}
-			$class = implode( ' ', $class );
-			$html  .= "<div class='" . esc_attr( $class ) . "'  id='{$layoutID}'>";
-			$html  .= $this->customStyle( $layoutID, $atts );
-			$html  .= '<div class="row tlp-layout-' . $atts['layout'] . '">';
-			if ( $teamQuery->have_posts() ) {
-				if ( $atts['layout'] == 'isotope' ) {
-					$terms = get_terms( TLPPortfolio()->taxonomies['category'], array(
-						'orderby'    => 'name',
-						'order'      => 'ASC',
-						'hide_empty' => false,
-					) );
-					$html  .= '<div id="tlp-portfolio-isotope-button" class="button-group filter-button-group option-set">
-											<button data-filter="*" class="selected">' . __( "Show all",
-							"tlp-portfolio" ) . '</button>';
-					if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-						foreach ( $terms as $term ) {
-							if ( ! empty( $cat_ids ) ) {
-								if ( in_array( $term->term_id, $cat_ids ) ) {
-									$html .= "<button data-filter='.{$term->slug}'>" . $term->name . "</button>";
-								}
-							} else {
-								$html .= "<button data-filter='.{$term->slug}'>" . $term->name . "</button>";
-							}
-						}
-					}
-					$html .= '</div>';
-					$html .= '<div class="tlp-portfolio-isotope">';
-				}
-
-				while ( $teamQuery->have_posts() ) : $teamQuery->the_post();
-
-					$title       = get_the_title();
-					$iID         = get_the_ID();
-					$plink       = get_permalink();
-					$short_d     = get_post_meta( $iID, 'short_description', true );
-					$project_url = get_post_meta( $iID, 'project_url', true );
-					$tools       = get_post_meta( $iID, 'tools', true );
-					$categories  = get_the_term_list( $iID, TLPPortfolio()->taxonomies['category'], 'Category : ', ',' );
-					$tags        = get_the_term_list( $iID, TLPPortfolio()->taxonomies['tag'], 'Tags : ', ',' );
-
-					$catClass  = null;
-					$catAs     = wp_get_post_terms( $iID, TLPPortfolio()->taxonomies['category'],
-						array( "fields" => "all" ) );
-					$deptClass = null;
-					if ( ! empty( $catAs ) ) {
-						foreach ( $catAs as $cat ) {
-							$catClass .= " " . $cat->slug;
-						}
-					}
-					$img     = null;
-					$imgFull = null;
-					if ( has_post_thumbnail() ) {
-						$img = TLPPortfolio()->getFeatureImageSrc( $iID, $fImgSize, $customImgSize );;
-						$imageFull = wp_get_attachment_image_src( get_post_thumbnail_id( $iID ), 'full' );
-						$imgFull   = $imageFull[0];
-					} else {
-						$img = TLPPortfolio()->assetsUrl . 'images/demo.jpg';
-					}
-					if ( ! $imgFull ) {
-						$imgFull = $img;
-					}
-					if ( ! $atts['image'] ) {
-						$content_area = "tlp-col-md-12";
-						$img          = null;
-					}
-					$itemArg                 = array();
-					$itemArg['title']        = $title;
-					$itemArg['plink']        = $project_url ? $project_url : $plink;
-					$itemArg['img']          = $img;
-					$itemArg['imgFull']      = $imgFull;
-					$itemArg['short_d']      = $short_d;
-					$itemArg['grid']         = $grid;
-					$itemArg['rand']         = $rand;
-					$itemArg['catClass']     = $catClass;
-					$itemArg['limit']        = $limit;
-					$itemArg['image_area']   = $image_area;
-					$itemArg['content_area'] = $content_area;
-					if ( $atts['layout'] ) {
-						switch ( $atts['layout'] ) {
-							case 1:
-								$html .= $this->templateOne( $itemArg );
-								break;
-
-							case 2:
-								$html .= $this->templateTwo( $itemArg );
-								break;
-
-							case 3:
-								$html .= $this->templateThree( $itemArg );
-								break;
-
-							case 'isotope':
-								$html .= $this->layoutIsotope( $itemArg );
-								break;
-
-							default:
-								# code...
-								break;
-						}
-					}
-				endwhile;
-				wp_reset_postdata();
-				if ( $atts['layout'] == 'isotope' ) {
-					$html .= '</div>'; // end tlp-team-isotope
-				}
-			} else {
-				$html .= "<p>No portfolio found</p>";
-			}
-			$html .= '</div>'; // end row
-			$html .= '</div>'; // end container
-
-			return $html;
-		}
+            $error = true;
+            $html = $msg = null;
 
 
-		function templateOne( $itemArg ) {
-			extract( $itemArg );
-			$html = null;
-			$html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
-			$html .= '<div class="tlp-portfolio-item">';
-			if ( $img ) {
-				$html .= '<div class="tlp-portfolio-thum tlp-item">';
-				$html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '"/>';
-				$html .= '<div class="tlp-overlay">';
-				$html .= '<p class="link-icon">';
-				$html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
-				$html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
-				$html .= '</p>';
-				$html .= '</div>';
-				$html .= '</div>';
-			}
-			$html .= sprintf( '<div class="tlp-content"><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3><div class="tlp-portfolio-sd">%s</div></div></div>',
-				$plink, $title,
-				$limit > 0 ? substr( $short_d, 0, $limit ) : wp_kses_post( html_entity_decode( $short_d ) ) //
-			);
-			$html .= '</div>';
-			$html .= '</div>';
+            $preview = isset($_REQUEST['sc_id']) ? absint($_REQUEST['sc_id']) : 0;
+            $scID = isset($atts['id']) ? absint($atts['id']) : 0;
+            if ($scID || $preview) {
+                $post = get_post($scID);
+                if ((!$preview && !is_null($post) && $post->post_type === TLPPortfolio()->getScPostType()) || ($preview && TLPPortfolio()->verifyNonce())) {
+                    $rand = mt_rand();
+                    $layoutID = "tlp-portfolio-container-" . $rand;
+                    $arg = array();
+                    $query_args = array(
+                        'post_type'   => TLPPortfolio()->post_type,
+                        'post_status' => 'publish',
+                    );
 
-			return $html;
-		}
+                    if ($preview) {
+                        $error = false;
+                        $scMeta = $_REQUEST;
+                        $layout = isset($scMeta['pfp_layout']) && !empty($scMeta['pfp_layout']) ? $scMeta['pfp_layout'] : 'layout1';
+                        $dCol = isset($scMeta['pfp_desktop_column']) && !empty($scMeta['pfp_desktop_column']) ? absint($scMeta['pfp_desktop_column']) : 3;
+                        $tCol = isset($scMeta['pfp_tab_column']) && !empty($scMeta['pfp_tab_column']) ? absint($scMeta['pfp_tab_column']) : 2;
+                        $mCol = isset($scMeta['pfp_mobile_column']) && !empty($scMeta['pfp_mobile_column']) ? absint($scMeta['pfp_mobile_column']) : 1;
+                        $imgSize = isset($scMeta['pfp_image_size']) && !empty($scMeta['pfp_image_size']) ? $scMeta['pfp_image_size'] : "medium";
+                        $customImgSize = isset($scMeta['pfp_custom_image_size']) && !empty($scMeta['pfp_custom_image_size']) ? $scMeta['pfp_custom_image_size'] : array();
+                        $excerpt_limit = isset($scMeta['pfp_excerpt_limit']) && !empty($scMeta['pfp_excerpt_limit']) ? absint($scMeta['pfp_excerpt_limit']) : 0;
+                        $disable_image = isset($scMeta['pfp_disable_image']) && !empty($scMeta['pfp_disable_image']) ? true : false;
 
-		function templateTwo( $itemArg ) {
-			extract( $itemArg );
-			$html = null;
-			$html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
-			$html .= '<div class="tlp-portfolio-item">';
-			if ( $img ) {
-				$html .= '<div class="tlp-portfolio-thum tlp-item ' . $image_area . '">';
-				$html .= '<figure>';
-				$html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '"/>';
-				$html .= '</figure>';
-				$html .= '<div class="tlp-overlay">';
-				$html .= '<ul class="link-icon">';
-				$html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
-				$html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
-				$html .= '</ul>';
-				$html .= '</div>';
-				$html .= '</div>';
-			}
-			$html .= sprintf( '<div class="tlp-content2 %s"><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3><div class="tlp-portfolio-sd">%s</div></div></div>',
-				$content_area,
-				$plink,
-				$title,
-				$limit > 0 ? substr( $short_d, 0, $limit ) : html_entity_decode( $short_d )
-			);
-			$html .= '</div>';
-			$html .= '</div>';
+                        $post__in = isset($scMeta['pfp_post__in']) && !empty($scMeta['pfp_post__in']) ? trim($scMeta['pfp_post__in']) : null;
+                        $post__not_in = isset($scMeta['pfp_post__not_in']) && !empty($scMeta['pfp_post__not_in']) ? trim($scMeta['pfp_post__not_in']) : null;
+                        $limit = $query_args['posts_per_page'] = !isset($scMeta['pfp_limit']) || (isset($scMeta['pfp_limit']) && (empty($scMeta['pfp_limit']) || $scMeta['pfp_limit'] === '-1')) ? 10000000 : (int)$scMeta['pfp_limit'];
+                        $pagination = isset($scMeta['pfp_pagination']) && !empty($scMeta['pfp_pagination']) ? true : false;
 
-			return $html;
-		}
+                        $cats = isset($scMeta['pfp_categories']) && !empty($scMeta['pfp_categories']) ? array_filter($scMeta['pfp_categories']) : array();
+                        $tags = isset($scMeta['pfp_tags']) && !empty($scMeta['pfp_tags']) ? array_filter($scMeta['pfp_tags']) : array();
+                        $relation = isset($scFMeta['pfp_taxonomy_relation']) && !empty($scFMeta['pfp_taxonomy_relation']) ? $scFMeta['pfp_taxonomy_relation'] : "AND";
+                        $order_by = isset($scMeta['pfp_order_by']) && !empty($scMeta['pfp_order_by']) ? $scMeta['pfp_order_by'] : null;
+                        $order = isset($scMeta['pfp_order']) && !empty($scMeta['pfp_order']) ? $scMeta['pfp_order'] : null;
+                        $parentClass = isset($scMeta['pfp_parent_class']) && !empty($scMeta['pfp_parent_class']) ? trim($scMeta['pfp_parent_class']) : null;
 
-		function templateThree( $itemArg ) {
-			extract( $itemArg );
-			$html = null;
-			$html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
+                    } else {
+                        $scMeta = get_post_meta($scID);
+                        $layout = isset($scMeta['pfp_layout'][0]) && !empty($scMeta['pfp_layout'][0]) ? $scMeta['pfp_layout'][0] : 'layout1';
+                        $dCol = isset($scMeta['pfp_desktop_column'][0]) && !empty($scMeta['pfp_desktop_column'][0]) ? absint($scMeta['pfp_desktop_column'][0]) : 3;
+                        $tCol = isset($scMeta['pfp_tab_column'][0]) && !empty($scMeta['pfp_tab_column'][0]) ? absint($scMeta['pfp_tab_column'][0]) : 2;
+                        $mCol = isset($scMeta['pfp_mobile_column'][0]) && !empty($scMeta['pfp_mobile_column'][0]) ? absint($scMeta['pfp_mobile_column'][0]) : 1;
+                        $imgSize = isset($scMeta['pfp_image_size'][0]) && !empty($scMeta['pfp_image_size'][0]) ? $scMeta['pfp_image_size'][0] : "medium";
+                        $customImgSize = isset($scMeta['pfp_custom_image_size'][0]) && !empty($scMeta['pfp_custom_image_size'][0]) ? $scMeta['pfp_custom_image_size'][0] : array();
+                        $excerpt_limit = isset($scMeta['pfp_excerpt_limit'][0]) && !empty($scMeta['pfp_excerpt_limit'][0]) ? absint($scMeta['pfp_excerpt_limit'][0]) : 0;
+                        $disable_image = isset($scMeta['pfp_disable_image'][0]) && !empty($scMeta['pfp_disable_image'][0]) ? true : false;
 
-			$html .= '<div class="tlp-portfolio-item">';
-			if ( $img ) {
-				$html .= '<div class="tlp-portfolio-thum tlp-item">';
-				$html .= '<figure>';
-				$html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '"/>';
-				$html .= '</figure>';
-				$html .= '<div class="tlp-overlay">';
-				$html .= '<p class="link-icon">';
-				$html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
-				$html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
-				$html .= '</p>';
-				$html .= '</div>';
-				$html .= '</div>';
-			}
-			$html .= sprintf( '<div class="tlp-content"><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3></div></div>',
-				$plink,
-				$title
-			);
-			$html .= '</div>';
+                        $post__in = isset($scMeta['pfp_post__in'][0]) && !empty($scMeta['pfp_post__in'][0]) ? trim($scMeta['pfp_post__in'][0]) : null;
+                        $post__not_in = isset($scMeta['pfp_post__not_in'][0]) && !empty($scMeta['pfp_post__not_in'][0]) ? trim($scMeta['pfp_post__not_in'][0]) : null;
+                        $limit = $query_args['posts_per_page'] = !isset($scMeta['pfp_limit'][0]) || (isset($scMeta['pfp_limit'][0]) && (empty($scMeta['pfp_limit'][0]) || $scMeta['pfp_limit'][0] === '-1')) ? 10000000 : (int)$scMeta['pfp_limit'][0];
+                        $pagination = isset($scMeta['pfp_pagination'][0]) && !empty($scMeta['pfp_pagination'][0]) ? true : false;
 
-			$html .= '</div>';
+                        $cats = isset($scMeta['pfp_categories']) && !empty($scMeta['pfp_categories']) ? array_filter($scMeta['pfp_categories']) : array();
+                        $tags = isset($scMeta['pfp_tags']) && !empty($scMeta['pfp_tags']) ? array_filter($scMeta['pfp_tags']) : array();
+                        $relation = isset($scFMeta['pfp_taxonomy_relation'][0]) && !empty($scFMeta['pfp_taxonomy_relation'][0]) ? $scFMeta['pfp_taxonomy_relation'][0] : "AND";
+                        $order_by = isset($scMeta['pfp_order_by'][0]) && !empty($scMeta['pfp_order_by'][0]) ? $scMeta['pfp_order_by'][0] : null;
+                        $order = isset($scMeta['pfp_order'][0]) && !empty($scMeta['pfp_order'][0]) ? $scMeta['pfp_order'][0] : null;
+                        $parentClass = isset($scMeta['pfp_parent_class'][0]) && !empty($scMeta['pfp_parent_class'][0]) ? trim($scMeta['pfp_parent_class'][0]) : null;
+                    }
 
-			return $html;
-		}
+                    if (!in_array($layout, array_keys(TLPPortfolio()->scLayouts()))) {
+                        $layout = 'layout1';
+                    }
 
-		function layoutIsotope( $itemArg ) {
-			extract( $itemArg );
-			$html = null;
-			$html .= "<div class='tlp-item tlp-single-item tlp-equal-height tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 {$catClass}'>";
-			$html .= '<div class="tlp-portfolio-item">';
-			if ( $img ) {
-				$html .= '<div class="tlp-portfolio-thum tlp-item">';
-				$html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '"/>';
-				$html .= '<div class="tlp-overlay">';
-				$html .= '<p class="link-icon">';
-				$html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
-				$html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
-				$html .= '</p>';
-				$html .= '</div>';
-				$html .= '</div>';
-			}
+                    if (!in_array($dCol, array_keys(TLPPortfolio()->scColumns()))) {
+                        $dCol = 3;
+                    }
+                    if (!in_array($tCol, array_keys(TLPPortfolio()->scColumns()))) {
+                        $tCol = 2;
+                    }
+                    if (!in_array($mCol, array_keys(TLPPortfolio()->scColumns()))) {
+                        $mCol = 1;
+                    }
 
-			$html .= sprintf( '<div class="tlp-content"><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3><div class="tlp-portfolio-sd">%s</div></div></div>',
-				$plink,
-				$title,
-				$limit > 0 ? substr( $short_d, 0, $limit ) : html_entity_decode( $short_d )
-			);
-			$html .= '</div>';
-			$html .= '</div>';
+                    $isIsotope = preg_match('/isotope/', $layout);
+                    $isCarousel = preg_match('/carousel/', $layout);
 
-			return $html;
-		}
+                    /* post__in */
+                    if ($post__in) {
+                        $query_args['post__in'] = explode(',', $post__in);
+                    }
+                    /* post__not_in */
+                    if ($post__not_in) {
+                        $query_args['post__not_in'] = explode(',', $post__not_in);
+                    }
 
-		private function customStyle( $layoutID, $atts ) {
-			$style           = null;
-			$title_color     = ! empty( $atts['title-color'] ) ? $atts['title-color'] : null;
-			$title_size      = ! empty( $atts['title-font-size'] ) ? $atts['title-font-size'] : null;
-			$title_weight    = ! empty( $atts['title-font-weight'] ) ? $atts['title-font-weight'] : null;
-			$title_alignment = ! empty( $atts['title-alignment'] ) ? $atts['title-alignment'] : null;
+                    /* LIMIT */
+                    if ($pagination) {
+                        $posts_per_page = (isset($scMeta['pfp_posts_per_page'][0]) ? intval($scMeta['pfp_posts_per_page'][0]) : $limit);
+                        if ($posts_per_page > $limit) {
+                            $posts_per_page = $limit;
+                        }
+                        // Set 'posts_per_page' parameter
+                        $query_args['posts_per_page'] = $posts_per_page;
 
-			$short_desc_color     = ! empty( $atts['short-desc-color'] ) ? $atts['short-desc-color'] : null;
-			$short_desc_size      = ! empty( $atts['short-desc-font-size'] ) ? $atts['short-desc-font-size'] : null;
-			$short_desc_weight    = ! empty( $atts['short-desc-font-weight'] ) ? $atts['short-desc-font-weight'] : null;
-			$short_desc_alignment = ! empty( $atts['short-desc-alignment'] ) ? $atts['short-desc-alignment'] : null;
-			if ( $title_color ) {
-				$style .= "#{$layoutID}.tlp-portfolio h3,
+                        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+                        $offset = $posts_per_page * ((int)$paged - 1);
+                        $query_args['paged'] = $paged;
+
+                        // Update posts_per_page
+                        if (intval($query_args['posts_per_page']) > $limit - $offset) {
+                            $query_args['posts_per_page'] = $limit - $offset;
+                        }
+
+                    }
+                    if ($isCarousel) {
+                        $args['posts_per_page'] = $limit;
+                    }
+
+                    $taxQ = array();
+                    if (is_array($cats) && !empty($cats)) {
+                        $taxQ[] = array(
+                            'taxonomy' => TLPPortfolio()->taxonomies['category'],
+                            'field'    => 'term_id',
+                            'terms'    => $cats,
+                        );
+                    }
+                    if (is_array($tags) && !empty($tags)) {
+                        $taxQ[] = array(
+                            'taxonomy' => TLPPortfolio()->taxonomies['tag'],
+                            'field'    => 'term_id',
+                            'terms'    => $tags,
+                        );
+                    }
+                    if (!empty($taxQ)) {
+                        if (count($taxQ) > 1) {
+                            $taxQ['relation'] = $relation;
+                        }
+                        $query_args['tax_query'] = $taxQ;
+                    }
+
+                    if ($order) {
+                        $query_args['order'] = $order;
+                    }
+                    if ($order_by) {
+                        $query_args['orderby'] = $order_by;
+                    }
+
+                    // Validation
+                    $containerDataAttr = " data-layout='{$layout}' data-desktop-col='{$dCol}'  data-tab-col='{$tCol}'  data-mobile-col='{$mCol}'";
+                    $old_dCol = $dCol;
+                    $dCol = round(12 / $dCol);
+                    $tCol = round(12 / $tCol);
+                    $mCol = round(12 / $mCol);
+                    if ($isCarousel) {
+                        $dCol = $tCol = $mCol = 12;
+                    }
+
+                    $arg['grid'] = sprintf('tlp-col-lg-%d tlp-col-md-%d tlp-col-sm-%d tlp-col-xs-12 tlp-equal-height%s%s', $dCol, $tCol, $mCol,
+                        $isIsotope ? ' tlp-isotope-item' : null,
+                        $isCarousel ? ' tlp-carousel-item' : null
+                    );
+
+
+                    if ($old_dCol == 2) {
+                        $arg['image_area'] = "tlp-col-lg-5 tlp-col-md-5 tlp-col-sm-6 tlp-col-xs-12 ";
+                        $arg['content_area'] = "tlp-col-lg-7 tlp-col-md-7 tlp-col-sm-6 tlp-col-xs-12 ";
+                    } else {
+                        $arg['image_area'] = "tlp-col-lg-3 tlp-col-md-3 tlp-col-sm-6 tlp-col-xs-12 ";
+                        $arg['content_area'] = "tlp-col-lg-9 tlp-col-md-9 tlp-col-sm-6 tlp-col-xs-12 ";
+                    }
+
+                    $teamQuery = new WP_Query(apply_filters('tlp_portfolio_sc_query_args', $query_args));
+                    $class = array(
+                        'rt-container-fluid',
+                        'tlp-portfolio',
+                        'tlp-portfolio-container'
+                    );
+                    if ($parentClass) {
+                        $class[] = $parentClass;
+                    }
+                    if ($isIsotope) {
+                        $class[] = 'is-isotope';
+                    }
+                    if ($isCarousel) {
+                        $class[] = 'is-carousel';
+                    }
+                    //$html .= $this->customStyle($layoutID, $atts, $preview);
+                    if ($teamQuery->have_posts()) {
+                        $html .= sprintf('<div class="%s" id="%s"><div class="rt-row %s">', implode(' ', $class), $layoutID, $layout);
+                        if ($isIsotope) {
+                            $terms = get_terms(apply_filters('tlp_portfolio_sc_isotope_button_args', array(
+                                'taxonomy'   => TLPPortfolio()->taxonomies['category'],
+                                'orderby'    => 'name',
+                                'order'      => 'ASC',
+                                'hide_empty' => false,
+                            )));
+
+                            if (!empty($terms) && !is_wp_error($terms)) {
+                                $html .= sprintf('<div class="tlp-portfolio-isotope-button button-group filter-button-group option-set">
+											<button data-filter="*" class="selected">%s</button>', __("Show all", "tlp-portfolio"));
+                                foreach ($terms as $term) {
+                                    if (!empty($cat_ids)) {
+                                        if (in_array($term->term_id, $cat_ids)) {
+                                            $html .= "<button data-filter='.{$term->slug}'>" . $term->name . "</button>";
+                                        }
+                                    } else {
+                                        $html .= "<button data-filter='.{$term->slug}'>" . $term->name . "</button>";
+                                    }
+                                }
+                                $html .= '</div>';
+                            }
+                            $html .= '<div class="tlp-portfolio-isotope">';
+                        }
+
+                        while ($teamQuery->have_posts()) :
+                            $teamQuery->the_post();
+
+                            $arg['title'] = get_the_title();
+                            $arg['iID'] = $iID = get_the_ID();
+                            $plink = get_permalink();
+                            $project_url = get_post_meta($iID, 'project_url', true);
+                            $arg['plink'] = $project_url ? $project_url : $plink;
+                            $short_d = get_post_meta($iID, 'short_description', true);
+                            $arg['short_d'] = TLPPortfolio()->get_short_description($short_d, $excerpt_limit);
+                            if ($isIsotope) {
+                                $catClass = null;
+                                $catAs = wp_get_post_terms($iID, TLPPortfolio()->taxonomies['category'],
+                                    array("fields" => "all"));
+                                $deptClass = null;
+                                if (!empty($catAs)) {
+                                    foreach ($catAs as $cat) {
+                                        $catClass .= " " . $cat->slug;
+                                    }
+                                }
+                                if ($catClass) {
+                                    $arg['grid'] .= $catClass;
+                                }
+                            }
+
+                            if ($disable_image) {
+                                $arg['content_area'] = "tlp-col-md-12";
+                                $arg['imgFull'] = $arg['img'] = null;
+                            } else {
+                                if (has_post_thumbnail()) {
+                                    $arg['img'] = TLPPortfolio()->getFeatureImageSrc($iID, $imgSize, $customImgSize);
+                                    $imageFull = wp_get_attachment_image_src(get_post_thumbnail_id($iID), 'full');
+                                    $arg['imgFull'] = $imageFull[0];
+                                } else {
+                                    $arg['img'] = $arg['imgFull'] = null;
+                                }
+                                $arg['imgFull'] = !$arg['imgFull'] && $arg['img'] ? $arg['img'] : $arg['imgFull'];
+                            }
+                            $html .= TLPPortfolio()->render('layouts/' . $layout, $arg, true);
+                        endwhile;
+                        wp_reset_postdata();
+                        if ($isIsotope) {
+                            $html .= ' </div>'; // end tlp-team-isotope
+                        }
+                        $html .= '</div>'; // end row
+                        $html .= '</div>'; // end container
+                        $this->load_scripts();
+                    } else {
+                        $html .= sprintf('<p>%s</p>', __("No portfolio found", 'tlp-portfolio'));
+                    }
+                } else {
+                    if ($preview) {
+                        $msg = __('Session Error !!', 'tlp - team');
+                    } else {
+                        $html .= "<p>" . __("No shortCode found", 'tlp - team') . "</p>";
+                    }
+                }
+                if ($preview) {
+                    wp_send_json(array(
+                        'error' => $error,
+                        'msg'   => $msg,
+                        'data'  => $html
+                    ));
+                } else {
+                    return $html;
+                }
+            } else {
+                $atts = shortcode_atts(array(
+                    'orderby'                => 'date',
+                    'order'                  => 'DESC',
+                    'image'                  => 'true',
+                    'number'                 => -1,
+                    'col'                    => 3,
+                    'layout'                 => 1,
+                    'letter-limit'           => 0,
+                    'cat'                    => null,
+                    'title-color'            => null,
+                    'title-font-size'        => null,
+                    'title-font-weight'      => null,
+                    'title-alignment'        => null,
+                    'short-desc-color'       => null,
+                    'short-desc-font-size'   => null,
+                    'short-desc-font-weight' => null,
+                    'short-desc-alignment'   => null,
+                    'class'                  => null
+                ), $atts, 'tlpportfolio');
+
+                return $this->get_team_old_layout($atts);
+            }
+
+        }
+
+
+        function templateOne($itemArg) {
+            extract($itemArg);
+            $html = null;
+            $html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
+            $html .= '<div class="tlp-portfolio-item">';
+            if ($img) {
+                $html .= '<div class="tlp-portfolio-thum tlp-item">';
+                $html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '" />';
+                $html .= '<div class="tlp-overlay">';
+                $html .= '<p class="link-icon">';
+                $html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
+                $html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
+                $html .= '</p>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+            $html .= sprintf('<div class="tlp-content"><di class="tlp-content-holder"><h3><a href="%s">%s </a></h3><div class="tlp-portfolio-sd">%s </div></di ></div > ',
+                $plink, $title,
+                $limit > 0 ? substr($short_d, 0, $limit) : wp_kses_post(html_entity_decode($short_d)) //
+            );
+            $html .= '</div>';
+            $html .= '</div>';
+
+            return $html;
+        }
+
+        function templateTwo($itemArg) {
+            extract($itemArg);
+            $html = null;
+            $html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
+            $html .= '<div class="tlp-portfolio-item">';
+            if ($img) {
+                $html .= '<div class="tlp-portfolio-thum tlp-item ' . $image_area . '">';
+                $html .= '<figure>';
+                $html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '" />';
+                $html .= '</figure>';
+                $html .= '<div class="tlp-overlay">';
+                $html .= '<ul class="link-icon">';
+                $html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus" ></i></a>';
+                $html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link" ></i></a>';
+                $html .= '</ul>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+            $html .= sprintf('<div class="tlp-content2 %s" ><div class="tlp-content-holder"><h3><a href="%s">%s </a></h3><div class="tlp-portfolio-sd">%s</div></div></div>',
+                $content_area,
+                $plink,
+                $title,
+                $limit > 0 ? substr($short_d, 0, $limit) : html_entity_decode($short_d)
+            );
+            $html .= '</div>';
+            $html .= '</div>';
+
+            return $html;
+        }
+
+        function templateThree($itemArg) {
+            extract($itemArg);
+            $html = null;
+            $html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-equal-height'>";
+
+            $html .= '<div class="tlp-portfolio-item">';
+            if ($img) {
+                $html .= '<div class="tlp-portfolio-thum tlp-item">';
+                $html .= '<figure>';
+                $html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '" />';
+                $html .= '</figure>';
+                $html .= '<div class="tlp-overlay">';
+                $html .= '<p class="link-icon">';
+                $html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
+                $html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
+                $html .= '</p>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+            $html .= sprintf('<div class="tlp-content"><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3></div></div>',
+                $plink,
+                $title
+            );
+            $html .= '</div>';
+
+            $html .= '</div>';
+
+            return $html;
+        }
+
+        function layoutIsotope($itemArg) {
+            extract($itemArg);
+            $html = null;
+            $html .= "<div class='tlp-item tlp-single-item tlp-isotope-item tlp-equal-height tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 {$catClass}'>";
+            $html .= '<div class="tlp-portfolio-item">';
+            if ($img) {
+                $html .= '<div class="tlp-portfolio-thum tlp-item">';
+                $html .= '<img class="img-responsive" src="' . $img . '" alt="' . $title . '" />';
+                $html .= '<div class="tlp-overlay">';
+                $html .= '<p class="link-icon">';
+                $html .= '<a class="tlp-zoom" href="' . $imgFull . '"><i class="fa fa-search-plus"></i></a>';
+                $html .= '<a target="_blank" href="' . $plink . '"><i class="fa fa-external-link"></i></a>';
+                $html .= '</p >';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+
+            $html .= sprintf('<div class="tlp-content" ><div class="tlp-content-holder"><h3><a href="%s">%s</a></h3><div class="tlp-portfolio-sd">%s</div></div></div>',
+                $plink,
+                $title,
+                $limit > 0 ? substr($short_d, 0, $limit) : html_entity_decode($short_d)
+            );
+            $html .= '</div>';
+            $html .= '</div>';
+
+            return $html;
+        }
+
+        private function customStyle($layoutID, $atts, $preview = false) {
+            $style = null;
+            $title_color = !empty($atts['title-color']) ? $atts['title-color'] : null;
+            $title_size = !empty($atts['title-font-size']) ? $atts['title-font-size'] : null;
+            $title_weight = !empty($atts['title-font-weight']) ? $atts['title-font-weight'] : null;
+            $title_alignment = !empty($atts['title-alignment']) ? $atts['title-alignment'] : null;
+
+            $short_desc_color = !empty($atts['short-desc-color']) ? $atts['short-desc-color'] : null;
+            $short_desc_size = !empty($atts['short-desc-font-size']) ? $atts['short-desc-font-size'] : null;
+            $short_desc_weight = !empty($atts['short-desc-font-weight']) ? $atts['short-desc-font-weight'] : null;
+            $short_desc_alignment = !empty($atts['short-desc-alignment']) ? $atts['short-desc-alignment'] : null;
+            if ($title_color) {
+                $style .= "#{$layoutID}.tlp-portfolio h3,
 							#{$layoutID}.tlp-portfolio h3 a{ color: {$title_color};}";
-			}
-			if ( $title_size ) {
-				$style .= "#{$layoutID}.tlp-portfolio h3,
+            }
+            if ($title_size) {
+                $style .= "#{$layoutID}.tlp-portfolio h3,
 							#{$layoutID}.tlp-portfolio h3 a{ font-size: {$title_size}px;}";
-			}
-			if ( $title_weight ) {
-				$style .= "#{$layoutID}.tlp-portfolio h3,
+            }
+            if ($title_weight) {
+                $style .= "#{$layoutID}.tlp-portfolio h3,
 							#{$layoutID}.tlp-portfolio h3 a{ font-weight: {$title_weight};}";
-			}
-			if ( $title_alignment ) {
-				$style .= "#{$layoutID}.tlp-portfolio h3{ text-align: {$title_alignment};}";
-			}
-			// Short description
-			if ( $short_desc_color || $short_desc_size || $short_desc_weight || $short_desc_alignment ) {
-				$style .= "#{$layoutID}.tlp-portfolio .tlp-content-holder p{";
-				if ( $short_desc_color ) {
-					$style .= "color: {$short_desc_color};";
-				}
-				if ( $short_desc_size ) {
-					$style .= "font-size: {$short_desc_size}px;";
-				}
-				if ( $short_desc_weight ) {
-					$style .= "font-weight: {$short_desc_weight};";
-				}
-				if ( $short_desc_alignment ) {
-					$style .= "text-align: {$short_desc_alignment};";
-				}
-				$style .= "}";
-			}
+            }
+            if ($title_alignment) {
+                $style .= "#{$layoutID}.tlp-portfolio h3{ text-align: {$title_alignment};}";
+            }
+            // Short description
+            if ($short_desc_color || $short_desc_size || $short_desc_weight || $short_desc_alignment) {
+                $style .= "#{$layoutID}.tlp-portfolio .tlp-content-holder p{";
+                if ($short_desc_color) {
+                    $style .= "color: {$short_desc_color};";
+                }
+                if ($short_desc_size) {
+                    $style .= "font-size: {$short_desc_size}px;";
+                }
+                if ($short_desc_weight) {
+                    $style .= "font-weight: {$short_desc_weight};";
+                }
+                if ($short_desc_alignment) {
+                    $style .= "text-align: {$short_desc_alignment};";
+                }
+                $style .= "}";
+            }
 
-			if ( ! empty( $style ) ) {
-				$style = "<style>{$style}</style>";
-			}
+            if (!empty($style)) {
+                $style = "<style>{$style}</style>";
+            }
 
-			return $style;
+            return $style;
 
-		}
-	}
+        }
+
+        private function get_team_old_layout($atts) {
+            $atts['image'] = 'true' === $atts['image'];
+            $limit = $atts['letter-limit'] ? absint($atts['letter-limit']) : 0;
+            if (!in_array($atts['col'], array_keys(TLPPortfolio()->scColumns()))) {
+                $atts['col'] = 3;
+            }
+            if (!in_array($atts['layout'], array_keys(TLPPortfolio()->oldScLayouts()))) {
+                $atts['layout'] = 1;
+            }
+            $layout = $atts['layout'] == 'isotope' ? 'isotope1' : 'layout' . $atts['layout'];
+            $isIsotope = preg_match('/isotope/', $layout);
+            $grid = $atts['col'] == 5 ? '24' : 12 / $atts['col'];
+            if ($atts['col'] == 2) {
+                $image_area = "tlp-col-lg-5 tlp-col-md-5 tlp-col-sm-6 tlp-col-xs-12 ";
+                $content_area = "tlp-col-lg-7 tlp-col-md-7 tlp-col-sm-6 tlp-col-xs-12 ";
+            } else {
+                $image_area = "tlp-col-lg-3 tlp-col-md-3 tlp-col-sm-6 tlp-col-xs-12 ";
+                $content_area = "tlp-col-lg-9 tlp-col-md-9 tlp-col-sm-6 tlp-col-xs-12 ";
+            }
+
+            $html = null;
+            $rand = rand(1, 10);
+            $args = array(
+                'post_type'      => TLPPortfolio()->post_type,
+                'post_status'    => 'publish',
+                'posts_per_page' => $atts['number'],
+                'orderby'        => $atts['orderby'],
+                'order'          => $atts['order']
+            );
+            if (is_user_logged_in() && is_super_admin()) {
+                $args['post_status'] = array('publish', 'private');
+            }
+            $cat_ids = array();
+            if (!empty($atts['cat'])) {
+                $cat_ids = explode(",", $atts['cat']);
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => TLPPortfolio()->taxonomies['category'],
+                        'field'    => 'term_id',
+                        'terms'    => $cat_ids,
+                        'operator' => 'IN'
+                    ),
+                );
+            }
+            $settings = get_option(TLPPortfolio()->options['settings']);
+            $fImgSize = !empty($settings['feature_img_size']) ? $settings['feature_img_size'] : TLPPortfolio()->options['tlp-portfolio-thumb'];
+            $customImgSize = !empty($settings['rt_custom_img_size']) ? $settings['rt_custom_img_size'] : array();
+
+            $teamQuery = new WP_Query($args);
+            $layoutID = "tlp-portfolio-container-" . mt_rand();
+            $class = array(
+                'rt-container-fluid',
+                'tlp-portfolio',
+                'tlp-portfolio-container'
+            );
+            if (!empty($atts['class'])) {
+                $class[] = $atts['class'];
+            }
+            if ($isIsotope) {
+                $class[] = 'is-isotope';
+            }
+            $class = implode(' ', $class);
+            $html .= "<div class='" . esc_attr($class) . "' id='{$layoutID}'>";
+            $html .= $this->customStyle($layoutID, $atts);
+            $html .= '<div class="rt-row ' . $layout . '">';
+            if ($teamQuery->have_posts()) {
+                if ($isIsotope) {
+                    $terms = get_terms(TLPPortfolio()->taxonomies['category'], array(
+                        'orderby'    => 'name',
+                        'order'      => 'ASC',
+                        'hide_empty' => false,
+                    ));
+                    $html .= '<div class="tlp-portfolio-isotope-button button-group filter-button-group option-set">
+											<button data-filter="*" class="selected">' . __("Show all",
+                            "tlp-portfolio") . '</button > ';
+                    if (!empty($terms) && !is_wp_error($terms)) {
+                        foreach ($terms as $term) {
+                            if (!empty($cat_ids)) {
+                                if (in_array($term->term_id, $cat_ids)) {
+                                    $html .= "<button data-filter=' .{
+                            $term->slug}'>" . $term->name . "</button>";
+                                }
+                            } else {
+                                $html .= "<button data-filter=' .{$term->slug}'>" . $term->name . "</button>";
+                            }
+                        }
+                    }
+                    $html .= ' </div > ';
+                    $html .= '<div class="tlp-portfolio-isotope">';
+                }
+
+                while ($teamQuery->have_posts()) : $teamQuery->the_post();
+
+                    $title = get_the_title();
+                    $iID = get_the_ID();
+                    $plink = get_permalink();
+                    $short_d = get_post_meta($iID, 'short_description', true);
+                    $project_url = get_post_meta($iID, 'project_url', true);
+                    $tools = get_post_meta($iID, 'tools', true);
+                    $categories = get_the_term_list($iID, TLPPortfolio()->taxonomies['category'], 'Category : ', ',');
+                    $tags = get_the_term_list($iID, TLPPortfolio()->taxonomies['tag'], 'Tags : ', ',');
+
+                    $catClass = null;
+                    $catAs = wp_get_post_terms($iID, TLPPortfolio()->taxonomies['category'],
+                        array("fields" => "all"));
+                    $deptClass = null;
+                    if (!empty($catAs)) {
+                        foreach ($catAs as $cat) {
+                            $catClass .= " " . $cat->slug;
+                        }
+                    }
+                    $img = null;
+                    $imgFull = null;
+                    if (has_post_thumbnail()) {
+                        $img = TLPPortfolio()->getFeatureImageSrc($iID, $fImgSize, $customImgSize);;
+                        $imageFull = wp_get_attachment_image_src(get_post_thumbnail_id($iID), 'full');
+                        $imgFull = $imageFull[0];
+                    } else {
+                        $img = TLPPortfolio()->assetsUrl . 'images / demo . jpg';
+                    }
+                    if (!$imgFull) {
+                        $imgFull = $img;
+                    }
+                    if (!$atts['image']) {
+                        $content_area = "tlp-col-md-12";
+                        $img = null;
+                    }
+                    $itemArg = array();
+                    $itemArg['title'] = $title;
+                    $itemArg['plink'] = $project_url ? $project_url : $plink;
+                    $itemArg['img'] = $img;
+                    $itemArg['imgFull'] = $imgFull;
+                    $itemArg['short_d'] = $short_d;
+                    $itemArg['grid'] = $grid;
+                    $itemArg['rand'] = $rand;
+                    $itemArg['catClass'] = $catClass;
+                    $itemArg['limit'] = $limit;
+                    $itemArg['image_area'] = $image_area;
+                    $itemArg['content_area'] = $content_area;
+                    if ($atts['layout']) {
+                        switch ($layout) {
+                            case 'layout1':
+                                $html .= $this->templateOne($itemArg);
+                                break;
+
+                            case 'layout2':
+                                $html .= $this->templateTwo($itemArg);
+                                break;
+
+                            case 'layout3':
+                                $html .= $this->templateThree($itemArg);
+                                break;
+
+                            case 'isotope1':
+                                $html .= $this->layoutIsotope($itemArg);
+                                break;
+
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
+                endwhile;
+                wp_reset_postdata();
+                if ($isIsotope) {
+                    $html .= ' </div > '; // end tlp-team-isotope
+                }
+                $this->load_scripts();
+
+            } else {
+                $html .= "<p>No portfolio found</p>";
+            }
+            $html .= '</div > '; // end row
+            $html .= '</div > '; // end container
+            return $html;
+        }
+    }
 
 
 endif;

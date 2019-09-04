@@ -1,322 +1,340 @@
 <?php
-if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
+if (!class_exists('TLPPortfolioHelper')) :
 
-	class TLPPortfolioHelper {
+    class TLPPortfolioHelper
+    {
 
-		function verifyNonce() {
-			$nonce     = isset( $_REQUEST['tlp_nonce'] ) && ! empty( $_REQUEST['tlp_nonce'] ) ? $_REQUEST['tlp_nonce'] : null;
-			$nonceText = $this->nonceText();
-			if ( wp_verify_nonce( $nonce, $nonceText ) ) {
-				return true;
-			}
+        function verifyNonce() {
+            $nonce = isset($_REQUEST['tlp_nonce']) && !empty($_REQUEST['tlp_nonce']) ? $_REQUEST['tlp_nonce'] : null;
+            $nonceText = $this->nonceText();
+            if (wp_verify_nonce($nonce, $nonceText)) {
+                return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		function nonceText() {
-			return "tlp_portfolio_nonce";
-		}
+        function nonceId() {
+            return "tlp_nonce";
+        }
 
-
-		function meta_exist($post_id, $meta_key, $type = "post") {
-			if (!$post_id) {
-				return false;
-			}
-
-			return metadata_exists($type, $post_id, $meta_key);
-		}
-		/**
-		 * @return string
-		 * Remove select2Js confection
-		 */
-		function getSelect2JsId() {
-			$select2Id = 'tlp-select2';
-			if ( class_exists( 'WPSEO_Admin_Asset_Manager' ) && class_exists( 'Avada' ) ) {
-				$select2Id = 'yoast-seo-select2';
-			} elseif ( class_exists( 'WPSEO_Admin_Asset_Manager' ) ) {
-				$select2Id = 'yoast-seo-select2';
-			} elseif ( class_exists( 'Avada' ) ) {
-				$select2Id = 'select2-avada-js';
-			}
-
-			return $select2Id;
-		}
-
-		function pfpScMetaFields() {
-			return array_merge(
-				TLPPortfolio()->scLayoutMetaFields(),
-				TLPPortfolio()->scFilterMetaFields(),
-				TLPPortfolio()->scStyleFields()
-			);
-		}
-
-		function rtFieldGenerator( $fields = array() ) {
-			$html = null;
-			if ( is_array( $fields ) && ! empty( $fields ) ) {
-				$PFProField = new TlpPortfolioField();
-				foreach ( $fields as $fieldKey => $field ) {
-					$html .= $PFProField->Field( $fieldKey, $field );
-				}
-			}
-
-			return $html;
-		}
-
-		function getAllPortFolioCategoryList() {
-			$terms    = array();
-			$termList = get_terms( array( TLPPortfolio()->taxonomies['category'] ), array( 'hide_empty' => 0 ) );
-			if ( is_array( $termList ) && ! empty( $termList ) && empty( $termList['errors'] ) ) {
-				foreach ( $termList as $term ) {
-					$terms[ $term->term_id ] = $term->name;
-				}
-			}
-
-			return $terms;
-		}
+        function nonceText() {
+            return "tlp_portfolio_nonce";
+        }
 
 
-		function getAllPortFolioTagList() {
-			$terms = array();
-			$termList = get_terms(array(TLPPortfolio()->taxonomies['tag']), array('hide_empty' => 0));
-			if (is_array($termList) && !empty($termList) && empty($termList['errors'])) {
-				foreach ($termList as $term) {
-					$terms[$term->term_id] = $term->name;
-				}
-			}
+        function meta_exist($post_id, $meta_key, $type = "post") {
+            if (!$post_id) {
+                return false;
+            }
 
-			return $terms;
-		}
+            return metadata_exists($type, $post_id, $meta_key);
+        }
 
-		function get_image_sizes() {
-			global $_wp_additional_image_sizes;
+        function get_short_description($content, $limit = 0, $tags = '', $invert = false) {
+            $filter_content = wp_kses_post(html_entity_decode($content));
+            if ($limit) {
+                $filter_content = wp_filter_nohtml_kses($filter_content);
+                if ($limit > 0 && strlen($filter_content) > $limit) {
+                    $filter_content = mb_substr($filter_content, 0, $limit, "utf-8");
+                    $filter_content = preg_replace('/\W\w+\s*(\W*)$/', '$1', $filter_content);
+                }
+            }
 
-			$sizes      = array();
-			$interSizes = get_intermediate_image_sizes();
-			if ( ! empty( $interSizes ) ) {
-				foreach ( get_intermediate_image_sizes() as $_size ) {
-					if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
-						$sizes[ $_size ]['width']  = get_option( "{$_size}_size_w" );
-						$sizes[ $_size ]['height'] = get_option( "{$_size}_size_h" );
-						$sizes[ $_size ]['crop']   = (bool) get_option( "{$_size}_crop" );
-					} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
-						$sizes[ $_size ] = array(
-							'width'  => $_wp_additional_image_sizes[ $_size ]['width'],
-							'height' => $_wp_additional_image_sizes[ $_size ]['height'],
-							'crop'   => $_wp_additional_image_sizes[ $_size ]['crop'],
-						);
-					}
-				}
-			}
+            return apply_filters('tlp_portfolio_get_short_description', $filter_content, $content, $limit);
+        }
 
-			$imgSize = array();
-			if ( ! empty( $sizes ) ) {
-				foreach ( $sizes as $key => $img ) {
-					$imgSize[ $key ] = ucfirst( $key ) . " ({$img['width']}*{$img['height']})";
-				}
-			}
-			$imgSize['rt_custom'] = __( "Custom image size", "tlp-portfolio" );
+        /**
+         * @return string
+         * Remove select2Js confection
+         */
+        function getSelect2JsId() {
+            $select2Id = 'tlp-select2';
+            if (class_exists('WPSEO_Admin_Asset_Manager') && class_exists('Avada')) {
+                $select2Id = 'yoast-seo-select2';
+            } elseif (class_exists('WPSEO_Admin_Asset_Manager')) {
+                $select2Id = 'yoast-seo-select2';
+            } elseif (class_exists('Avada')) {
+                $select2Id = 'select2-avada-js';
+            }
 
-			return $imgSize;
-		}
+            return $select2Id;
+        }
 
-		function getFeatureImageSrc( $post_id = null, $fImgSize = 'team-thumb', $customImgSize = array() ) {
-			$imgSrc = null;
-			$cSize  = false;
-			if ( $fImgSize == 'rt_custom' ) {
-				$fImgSize = 'full';
-				$cSize    = true;
-			}
+        function pfpScMetaFields() {
+            return array_merge(
+                TLPPortfolio()->scLayoutMetaFields(),
+                TLPPortfolio()->scFilterMetaFields(),
+                TLPPortfolio()->scStyleFields()
+            );
+        }
 
-			if ( $aID = get_post_thumbnail_id( $post_id ) ) {
-				$image  = wp_get_attachment_image_src( $aID, $fImgSize );
-				$imgSrc = $image[0];
-			}
+        function rtFieldGenerator($fields = array()) {
+            $html = null;
+            if (is_array($fields) && !empty($fields)) {
+                $PFProField = new TlpPortfolioField();
+                foreach ($fields as $fieldKey => $field) {
+                    $html .= $PFProField->Field($fieldKey, $field);
+                }
+            }
 
-			if ( $imgSrc && $cSize ) {
-				global $TLPportfolio;
-				$w = ( ! empty( $customImgSize['width'] ) ? absint( $customImgSize['width'] ) : null );
-				$h = ( ! empty( $customImgSize['height'] ) ? absint( $customImgSize['height'] ) : null );
-				$c = ( ! empty( $customImgSize['crop'] ) && $customImgSize['crop'] == 'soft' ? false : true );
-				if ( $w && $h ) {
-					$imgSrc = $TLPportfolio->rtImageReSize( $imgSrc, $w, $h, $c );
-				}
-			}
+            return $html;
+        }
 
-			return $imgSrc;
-		}
+        function getAllPortFolioCategoryList() {
+            $terms = array();
+            $termList = get_terms(array(TLPPortfolio()->taxonomies['category']), array('hide_empty' => 0));
+            if (is_array($termList) && !empty($termList) && empty($termList['errors'])) {
+                foreach ($termList as $term) {
+                    $terms[$term->term_id] = $term->name;
+                }
+            }
 
-		function rtImageReSize($url, $width = null, $height = null, $crop = null, $single = true, $upscale = false) {
-			$rtResize = new PFProReSizer();
-
-			return $rtResize->process($url, $width, $height, $crop, $single, $upscale);
-		}
+            return $terms;
+        }
 
 
+        function getAllPortFolioTagList() {
+            $terms = array();
+            $termList = get_terms(array(TLPPortfolio()->taxonomies['tag']), array('hide_empty' => 0));
+            if (is_array($termList) && !empty($termList) && empty($termList['errors'])) {
+                foreach ($termList as $term) {
+                    $terms[$term->term_id] = $term->name;
+                }
+            }
 
-		/**
-		 * Sanitize field value
-		 *
-		 * @param array $field
-		 * @param null  $value
-		 *
-		 * @return array|null
-		 * @internal param $value
-		 */
-		function sanitize($field = array(), $value = null) {
-			$newValue = null;
-			if (is_array($field)) {
-				$type = (!empty($field['type']) ? $field['type'] : 'text');
-				if (empty($field['multiple'])) {
-					if ($type == 'text' || $type == 'number' || $type == 'select' || $type == 'checkbox' || $type == 'radio') {
-						$newValue = sanitize_text_field($value);
-					} else if ($type == 'price') {
-						$newValue = ('' === $value) ? '' : FMP()->format_decimal($value);
-					} else if ($type == 'url') {
-						$newValue = esc_url($value);
-					} else if ($type == 'slug') {
-						$newValue = sanitize_title_with_dashes($value);
-					} else if ($type == 'textarea') {
-						$newValue = wp_kses_post($value);
-					} else if ($type == 'custom_css') {
-						$newValue = htmlentities(stripslashes($value));
-					} else if ($type == 'colorpicker') {
-						$newValue = $this->sanitize_hex_color($value);
-					} else if ($type == 'image_size') {
-						$newValue = array();
-						foreach ($value as $k => $v) {
-							$newValue[$k] = esc_attr($v);
-						}
-					} else if ($type == 'style') {
-						$newValue = array();
-						foreach ($value as $k => $v) {
-							if ($k == 'color') {
-								$newValue[$k] = $this->sanitize_hex_color($v);
-							} else {
-								$newValue[$k] = $this->sanitize(array('type' => 'text'), $v);
-							}
-						}
-					} else {
-						$newValue = sanitize_text_field($value);
-					}
+            return $terms;
+        }
 
-				} else {
-					$newValue = array();
-					if (!empty($value)) {
-						if (is_array($value)) {
-							foreach ($value as $key => $val) {
-								if ($type == 'style' && $key == 0) {
-									if (function_exists('sanitize_hex_color')) {
-										$newValue = sanitize_hex_color($val);
-									} else {
-										$newValue[] = $this->sanitize_hex_color($val);
-									}
-								} else {
-									$newValue[] = sanitize_text_field($val);
-								}
-							}
-						} else {
-							$newValue[] = sanitize_text_field($value);
-						}
-					}
-				}
-			}
+        function get_image_sizes() {
+            global $_wp_additional_image_sizes;
 
-			return $newValue;
-		}
+            $sizes = array();
+            $interSizes = get_intermediate_image_sizes();
+            if (!empty($interSizes)) {
+                foreach (get_intermediate_image_sizes() as $_size) {
+                    if (in_array($_size, array('thumbnail', 'medium', 'large'))) {
+                        $sizes[$_size]['width'] = get_option("{$_size}_size_w");
+                        $sizes[$_size]['height'] = get_option("{$_size}_size_h");
+                        $sizes[$_size]['crop'] = (bool)get_option("{$_size}_crop");
+                    } elseif (isset($_wp_additional_image_sizes[$_size])) {
+                        $sizes[$_size] = array(
+                            'width'  => $_wp_additional_image_sizes[$_size]['width'],
+                            'height' => $_wp_additional_image_sizes[$_size]['height'],
+                            'crop'   => $_wp_additional_image_sizes[$_size]['crop'],
+                        );
+                    }
+                }
+            }
 
-		function sanitize_hex_color($color) {
-			if (function_exists('sanitize_hex_color')) {
-				return sanitize_hex_color($color);
-			} else {
-				if ('' === $color) {
-					return '';
-				}
+            $imgSize = array();
+            if (!empty($sizes)) {
+                foreach ($sizes as $key => $img) {
+                    $imgSize[$key] = ucfirst($key) . " ({$img['width']}*{$img['height']})";
+                }
+            }
+            $imgSize['rt_custom'] = __("Custom image size", "tlp-portfolio");
 
-				// 3 or 6 hex digits, or the empty string.
-				if (preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $color)) {
-					return $color;
-				}
-			}
-		}
+            return $imgSize;
+        }
 
-		function TLPhex2rgba( $color, $opacity = false ) {
-			$default = 'rgb(0,0,0)';
+        function getFeatureImageSrc($post_id = null, $fImgSize = 'team-thumb', $customImgSize = array()) {
+            $imgSrc = null;
+            $cSize = false;
+            if ($fImgSize == 'rt_custom') {
+                $fImgSize = 'full';
+                $cSize = true;
+            }
 
-			//Return default if no color provided
-			if ( empty( $color ) ) {
-				return $default;
-			}
+            if ($aID = get_post_thumbnail_id($post_id)) {
+                $image = wp_get_attachment_image_src($aID, $fImgSize);
+                $imgSrc = $image[0];
+            }
 
-			//Sanitize $color if "#" is provided
-			if ( $color[0] == '#' ) {
-				$color = substr( $color, 1 );
-			}
+            if ($imgSrc && $cSize) {
+                global $TLPportfolio;
+                $w = (!empty($customImgSize['width']) ? absint($customImgSize['width']) : null);
+                $h = (!empty($customImgSize['height']) ? absint($customImgSize['height']) : null);
+                $c = (!empty($customImgSize['crop']) && $customImgSize['crop'] == 'soft' ? false : true);
+                if ($w && $h) {
+                    $imgSrc = $TLPportfolio->rtImageReSize($imgSrc, $w, $h, $c);
+                }
+            }
 
-			//Check if color has 6 or 3 characters and get values
-			if ( strlen( $color ) == 6 ) {
-				$hex = array( $color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5] );
-			} elseif ( strlen( $color ) == 3 ) {
-				$hex = array( $color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2] );
-			} else {
-				return $default;
-			}
+            return $imgSrc;
+        }
 
-			//Convert hexadec to rgb
-			$rgb = array_map( 'hexdec', $hex );
+        function rtImageReSize($url, $width = null, $height = null, $crop = null, $single = true, $upscale = false) {
+            $rtResize = new PFProReSizer();
 
-			//Check if opacity is set(rgba or rgb)
-			if ( $opacity ) {
-				if ( abs( $opacity ) > 1 ) {
-					$opacity = 1.0;
-				}
-				$output = 'rgba(' . implode( ",", $rgb ) . ',' . $opacity . ')';
-			} else {
-				$output = 'rgb(' . implode( ",", $rgb ) . ')';
-			}
+            return $rtResize->process($url, $width, $height, $crop, $single, $upscale);
+        }
 
-			//Return rgb(a) color string
-			return $output;
-		}
 
-		function singlePortfolioMeta( $id = null ) {
-			global $TLPportfolio;
-			$id = ( ! $id ? get_the_ID() : $id );
-			if ( ! $id ) {
-				return;
-			}
+        /**
+         * Sanitize field value
+         *
+         * @param array $field
+         * @param null  $value
+         *
+         * @return array|null
+         * @internal param $value
+         */
+        function sanitize($field = array(), $value = null) {
+            $newValue = null;
+            if (is_array($field)) {
+                $type = (!empty($field['type']) ? $field['type'] : 'text');
+                if (empty($field['multiple'])) {
+                    if ($type == 'text' || $type == 'number' || $type == 'select' || $type == 'checkbox' || $type == 'radio') {
+                        $newValue = sanitize_text_field($value);
+                    } else if ($type == 'price') {
+                        $newValue = ('' === $value) ? '' : FMP()->format_decimal($value);
+                    } else if ($type == 'url') {
+                        $newValue = esc_url($value);
+                    } else if ($type == 'slug') {
+                        $newValue = sanitize_title_with_dashes($value);
+                    } else if ($type == 'textarea') {
+                        $newValue = wp_kses_post($value);
+                    } else if ($type == 'custom_css') {
+                        $newValue = htmlentities(stripslashes($value));
+                    } else if ($type == 'colorpicker') {
+                        $newValue = $this->sanitize_hex_color($value);
+                    } else if ($type == 'image_size') {
+                        $newValue = array();
+                        foreach ($value as $k => $v) {
+                            $newValue[$k] = esc_attr($v);
+                        }
+                    } else if ($type == 'style') {
+                        $newValue = array();
+                        foreach ($value as $k => $v) {
+                            if ($k == 'color') {
+                                $newValue[$k] = $this->sanitize_hex_color($v);
+                            } else {
+                                $newValue[$k] = $this->sanitize(array('type' => 'text'), $v);
+                            }
+                        }
+                    } else {
+                        $newValue = sanitize_text_field($value);
+                    }
 
-			$project_url = get_post_meta( $id, 'project_url', true );
-			$tools       = get_post_meta( get_the_ID(), 'tools', true );
-			$categories  = strip_tags( get_the_term_list( $id, $TLPportfolio->taxonomies['category'],
-				__( 'Categories: ', 'tlp-portfolio' ), ', ' ) );
-			$tags        = strip_tags( get_the_term_list( $id, $TLPportfolio->taxonomies['tag'], 'Tags: ', ', ' ) );
+                } else {
+                    $newValue = array();
+                    if (!empty($value)) {
+                        if (is_array($value)) {
+                            foreach ($value as $key => $val) {
+                                if ($type == 'style' && $key == 0) {
+                                    if (function_exists('sanitize_hex_color')) {
+                                        $newValue = sanitize_hex_color($val);
+                                    } else {
+                                        $newValue[] = $this->sanitize_hex_color($val);
+                                    }
+                                } else {
+                                    $newValue[] = sanitize_text_field($val);
+                                }
+                            }
+                        } else {
+                            $newValue[] = sanitize_text_field($value);
+                        }
+                    }
+                }
+            }
 
-			$html = null;
-			$html .= '<ul class="single-item-meta">';
-			if ( $project_url ) {
-				$html .= '<li>' . __( 'Project URL',
-						'tlp-portfolio' ) . ': <a  href="' . $project_url . '" target="_blank">' . $project_url . '</a></li>';
-			}
-			if ( $categories ) {
-				$html .= '<li class="categories">' . $categories . '</li>';
-			}
-			if ( $tools ) {
-				$html .= '<li class="tools">' . __( 'Tools', 'tlp-portfolio' ) . ': ' . $tools . '</li>';
-			}
-			if ( $tags ) {
-				$html .= '<li class="tags">' . $tags . '</li>';
-			}
-			$html .= "</ul>";
-			if ( $html ) {
-				$html = "<ul class='single-item-meta'>{$html}</ul>";
-			}
+            return $newValue;
+        }
 
-			return $html;
-		}
+        function sanitize_hex_color($color) {
+            if (function_exists('sanitize_hex_color')) {
+                return sanitize_hex_color($color);
+            } else {
+                if ('' === $color) {
+                    return '';
+                }
 
-		function socialShare( $pLink ) {
-			$html = null;
-			$html .= "<div class='single-portfolio-share'>
+                // 3 or 6 hex digits, or the empty string.
+                if (preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $color)) {
+                    return $color;
+                }
+            }
+        }
+
+        function TLPhex2rgba($color, $opacity = false) {
+            $default = 'rgb(0,0,0)';
+
+            //Return default if no color provided
+            if (empty($color)) {
+                return $default;
+            }
+
+            //Sanitize $color if "#" is provided
+            if ($color[0] == '#') {
+                $color = substr($color, 1);
+            }
+
+            //Check if color has 6 or 3 characters and get values
+            if (strlen($color) == 6) {
+                $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+            } elseif (strlen($color) == 3) {
+                $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+            } else {
+                return $default;
+            }
+
+            //Convert hexadec to rgb
+            $rgb = array_map('hexdec', $hex);
+
+            //Check if opacity is set(rgba or rgb)
+            if ($opacity) {
+                if (abs($opacity) > 1) {
+                    $opacity = 1.0;
+                }
+                $output = 'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
+            } else {
+                $output = 'rgb(' . implode(",", $rgb) . ')';
+            }
+
+            //Return rgb(a) color string
+            return $output;
+        }
+
+        function singlePortfolioMeta($id = null) {
+            global $TLPportfolio;
+            $id = (!$id ? get_the_ID() : $id);
+            if (!$id) {
+                return;
+            }
+
+            $project_url = get_post_meta($id, 'project_url', true);
+            $tools = get_post_meta(get_the_ID(), 'tools', true);
+            $categories = strip_tags(get_the_term_list($id, $TLPportfolio->taxonomies['category'],
+                __('Categories: ', 'tlp-portfolio'), ', '));
+            $tags = strip_tags(get_the_term_list($id, $TLPportfolio->taxonomies['tag'], 'Tags: ', ', '));
+
+            $html = null;
+            $html .= '<ul class="single-item-meta">';
+            if ($project_url) {
+                $html .= '<li>' . __('Project URL',
+                        'tlp-portfolio') . ': <a  href="' . $project_url . '" target="_blank">' . $project_url . '</a></li>';
+            }
+            if ($categories) {
+                $html .= '<li class="categories">' . $categories . '</li>';
+            }
+            if ($tools) {
+                $html .= '<li class="tools">' . __('Tools', 'tlp-portfolio') . ': ' . $tools . '</li>';
+            }
+            if ($tags) {
+                $html .= '<li class="tags">' . $tags . '</li>';
+            }
+            $html .= "</ul>";
+            if ($html) {
+                $html = "<ul class='single-item-meta'>{$html}</ul>";
+            }
+
+            return $html;
+        }
+
+        function socialShare($pLink) {
+            $html = null;
+            $html .= "<div class='single-portfolio-share'>
                         <div class='fb-share'>
                             <div class='fb-share-button' data-href='{$pLink}' data-layout='button_count'></div>
                         </div>
@@ -331,7 +349,7 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
                             <div class='g-plusone'></div>
                         </div>
                    </div>";
-			$html .= '<div id="fb-root"></div>
+            $html .= '<div id="fb-root"></div>
             <script>(function(d, s, id) {
                 var js, fjs = d.getElementsByTagName(s)[0];
                     if (d.getElementById(id)) return;
@@ -339,18 +357,18 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
                     js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
                     fjs.parentNode.insertBefore(js, fjs);
                 }(document, "script", "facebook-jssdk"));</script>';
-			$html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            $html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
             <script>window.___gcfg = { lang: 'en-US', parsetags: 'onload', };</script>";
-			$html .= "<script src='https://apis.google.com/js/platform.js' async defer></script>";
-			$html .= '<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>';
-			$html .= '<script async defer src="//assets.pinterest.com/js/pinit.js"></script>';
+            $html .= "<script src='https://apis.google.com/js/platform.js' async defer></script>";
+            $html .= '<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>';
+            $html .= '<script async defer src="//assets.pinterest.com/js/pinit.js"></script>';
 
-			return $html;
-		}
+            return $html;
+        }
 
 
-		function proFeatureList() {
-			$html = '<ol>
+        function proFeatureList() {
+            $html = '<ol>
                         <li>Full Responsive & Mobile Friendly</li>
                         <li>57 Layouts (Even Grid, Masonry Grid, Even Isotope, Masonry Isotope & Carousel Slider)</li>
                         <li>Unlimited Layouts Variation</li>
@@ -374,8 +392,8 @@ if ( ! class_exists( 'TLPPortfolioHelper' ) ) :
                     </ol>
                     <p><a href="https://radiustheme.com/tlp-portfolio-pro-for-wordpress/" class="button button-primary" target="_blank">Get Pro Version</a></p>';
 
-			return $html;
-		}
+            return $html;
+        }
 
-	}
+    }
 endif;
