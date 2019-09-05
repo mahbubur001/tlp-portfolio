@@ -13,13 +13,12 @@ if (!class_exists('TLPPortfolioOptions')) :
                     "class"   => "rt-select2",
                     'options' => $this->scLayouts()
                 ),
-                'pfp_isotope_selected_filter'   => array(
+                'pfp_isotope_filter_taxonomy'   => array(
                     "type"        => "select",
-                    "label"       => __("Isotope filter (Selected item)", 'tlp-portfolio'),
+                    "label"       => __("Isotope filter", 'tlp-portfolio'),
                     'holderClass' => "pfp-isotope-item pfp-hidden",
                     "class"       => "rt-select2",
-                    "blank"       => __('Show All', 'tlp-portfolio'),
-                    "options"     => TLPPortfolio()->getAllPortFolioCategoryList()
+                    "options"     => $this->isotope_filter_taxonomy()
                 ),
                 'pfp_isotope_filter_show_all'   => array(
                     "type"        => "checkbox",
@@ -27,13 +26,6 @@ if (!class_exists('TLPPortfolioOptions')) :
                     'holderClass' => "pfp-isotope-item pfp-hidden",
                     "id"          => "rt-tpg-sc-isotope-filter-show-all",
                     "optionLabel" => __('Disable', 'tlp-portfolio'),
-                    "option"      => 1
-                ),
-                'pfp_isotope_search_filtering'  => array(
-                    "type"        => "checkbox",
-                    "label"       => "Isotope search filter",
-                    'holderClass' => "pfp-isotope-item pfp-hidden",
-                    "optionLabel" => 'Enable',
                     "option"      => 1
                 ),
                 'pfp_carousel_items_per_slider' => array(
@@ -231,7 +223,7 @@ if (!class_exists('TLPPortfolioOptions')) :
                 'pfp_primary_color'           => array(
                     "type"    => "colorpicker",
                     "label"   => __("Primary Color", 'tlp-portfolio-pro'),
-                    "default" => "#0367bf"
+                    "alpha"   => true,
                 ),
                 'pfp_button_bg_color'         => array(
                     "type"  => "colorpicker",
@@ -389,6 +381,10 @@ if (!class_exists('TLPPortfolioOptions')) :
                 800       => '800',
                 900       => '900',
             );
+        }
+
+        private function isotope_filter_taxonomy() {
+            return apply_filters('tlp_portfolio_isotope_filter_taxonomy', array_flip(TLPPortfolio()->taxonomies));
         }
 
     }

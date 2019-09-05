@@ -806,8 +806,8 @@ img.mfp-img {
     margin-right: 5px;
 }
 
-.tlp-equal-height {
-    margin-bottom: 30px;
+.tlp-portfolio-container .tlp-single-item{
+    margin-bottom  :30px;
 }
 
 .tlp-portfolio .img-responsive {
@@ -834,6 +834,48 @@ img.mfp-img {
     margin-top: 8px;
 }
 
+/* ============== Pagination ============== */
+
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination {
+    display: flex;
+    margin: 20px 0;
+    justify-content: center;
+}
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li {
+    display: inline-block;
+}
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span:hover,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span:focus,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a:hover,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a:focus{
+    color: #777777;
+    background-color: #ffffff;
+    border-color: #dddddd;
+    cursor: not-allowed;
+}
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li > a,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li > span {
+    position: relative;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    text-decoration: none;
+    color: #337ab7;
+    background-color: #ffffff;
+    border: 0;
+}
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a:hover,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span:hover,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a:focus,
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span:focus{
+    z-index: 3;
+    color: #ffffff;
+    background-color: #337ab7;
+    cursor: default;
+}
 /********************* end common css ******************/
 /************************ Layout 1 ******************************/
 .tlp-portfolio .layout1 .tlp-portfolio-thum {
@@ -940,7 +982,8 @@ img.mfp-img {
 }
 
 .tlp-portfolio .layout1 .tlp-content .tlp-content-holder {
-    padding: 15px 0px;
+    padding: 15px;
+    display: block;
 }
 
 /*********************** Layout 2 ****************************/
@@ -951,7 +994,7 @@ img.mfp-img {
     padding-right: 0;
 }
 
-.tlp-portfolio .layout2 .tlp-equal-height .tlp-portfolio-item {
+.tlp-portfolio .layout2 .tlp-single-item .tlp-portfolio-item {
     display: table;
     width: 100%;
 }

@@ -49,24 +49,25 @@
         if ($(window).width() > 768) {
             $(document).find(".tlp-portfolio-container").each(function () {
                 var container = $(this);
-                pfpFixLazyLoad(container);
-
-                setTimeout(function () {
-                    container.imagesLoaded().progress(function (instance, image) {
-                        container.trigger('pfp_image_loading');
-                    }).done(function (instance) {
-                        container.trigger('pfp_image_loaded');
-                        var tlpMaxH = 0;
-                        container.find(".tlp-portfolio-item").height("auto");
-                        container.find(".tlp-equal-height").each(function () {
-                            var $thisH = $(this).find(".tlp-portfolio-item").outerHeight();
-                            if ($thisH > tlpMaxH) {
-                                tlpMaxH = $thisH;
-                            }
+                if (!container.hasClass('is-isotope')) {
+                    pfpFixLazyLoad(container);
+                    setTimeout(function () {
+                        container.imagesLoaded().progress(function (instance, image) {
+                            container.trigger('pfp_image_loading');
+                        }).done(function (instance) {
+                            container.trigger('pfp_image_loaded');
+                            var tlpMaxH = 0;
+                            container.find(".tlp-portfolio-item").height("auto");
+                            container.find(".tlp-equal-height").each(function () {
+                                var $thisH = $(this).find(".tlp-portfolio-item").outerHeight();
+                                if ($thisH > tlpMaxH) {
+                                    tlpMaxH = $thisH;
+                                }
+                            });
+                            container.find(".tlp-portfolio-item").height(tlpMaxH + "px");
                         });
-                        container.find(".tlp-portfolio-item").height(tlpMaxH + "px");
-                    });
-                }, 10);
+                    }, 10);
+                }
             });
 
         } else {
@@ -123,24 +124,30 @@
         });
     };
 
+    window.initPfpMagicPopup = function () {
+        if ($.fn.magnificPopup) {
+            $('.tlp-portfolio-container').each(function () {
+                $(this).magnificPopup({
+                    delegate: '.tlp-zoom',
+                    type: 'image',
+                    preload: [1, 3],
+                    gallery: {
+                        enabled: true
+                    }
+                });
+            });
+        }
+    };
+
     $(document).on('pfp_loaded pfp_item_after_load', function () {
+        initPfpMagicPopup();
         pfpHeightResize();
         pfpOverlayIconResize();
-        console.log('called');
     });
     $(function () {
-        $('.tlp-portfolio').each(function () {
-            $(this).magnificPopup({
-                delegate: '.tlp-zoom',
-                type: 'image',
-                preload: [1, 3],
-                gallery: {
-                    enabled: true
-                }
-            });
-        });
+        initPfpMagicPopup();
+        initTlpPortfolio();
     });
-    initTlpPortfolio();
     $(window).on('resize', function () {
         $(".tlp-portfolio-container").trigger("pfp_loaded");
     });

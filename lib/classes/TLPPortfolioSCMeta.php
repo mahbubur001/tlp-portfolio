@@ -162,7 +162,7 @@ if ( ! class_exists( 'TLPPortfolioSCMeta' ) ):
 			// scripts
 			wp_enqueue_script( array(
 				'jquery',
-				'wp-color-picker',
+				'wp-color-picker-alpha',
 				'tlp-magnific',
 				TLPPortfolio()->getSelect2JsId(),
 				'tlp-owl-carousel',

@@ -255,7 +255,6 @@
             // Add Shortcode ID
             data = data + '&' + $.param({'sc_id': $('#post_ID').val() || 0});
             TlpPortfolioPreviewAjaxCall(null, 'tlp_portfolio_preview_ajax_call', data, function (data) {
-                console.log(data);
                 if (!data.error) {
                     $("#pfp-preview-container").html(data.data);
                     initTlpPortfolio();

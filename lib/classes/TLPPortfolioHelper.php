@@ -133,7 +133,7 @@ if (!class_exists('TLPPortfolioHelper')) :
                     $imgSize[$key] = ucfirst($key) . " ({$img['width']}*{$img['height']})";
                 }
             }
-            $imgSize['rt_custom'] = __("Custom image size", "tlp-portfolio");
+            $imgSize['pfp_custom'] = __("Custom image size", "tlp-portfolio");
 
             return $imgSize;
         }
@@ -185,11 +185,7 @@ if (!class_exists('TLPPortfolioHelper')) :
             if (is_array($field)) {
                 $type = (!empty($field['type']) ? $field['type'] : 'text');
                 if (empty($field['multiple'])) {
-                    if ($type == 'text' || $type == 'number' || $type == 'select' || $type == 'checkbox' || $type == 'radio') {
-                        $newValue = sanitize_text_field($value);
-                    } else if ($type == 'price') {
-                        $newValue = ('' === $value) ? '' : FMP()->format_decimal($value);
-                    } else if ($type == 'url') {
+                    if ($type == 'url') {
                         $newValue = esc_url($value);
                     } else if ($type == 'slug') {
                         $newValue = sanitize_title_with_dashes($value);
@@ -197,8 +193,6 @@ if (!class_exists('TLPPortfolioHelper')) :
                         $newValue = wp_kses_post($value);
                     } else if ($type == 'custom_css') {
                         $newValue = htmlentities(stripslashes($value));
-                    } else if ($type == 'colorpicker') {
-                        $newValue = $this->sanitize_hex_color($value);
                     } else if ($type == 'image_size') {
                         $newValue = array();
                         foreach ($value as $k => $v) {
@@ -366,7 +360,6 @@ if (!class_exists('TLPPortfolioHelper')) :
             return $html;
         }
 
-
         function proFeatureList() {
             $html = '<ol>
                         <li>Full Responsive & Mobile Friendly</li>
@@ -393,6 +386,87 @@ if (!class_exists('TLPPortfolioHelper')) :
                     <p><a href="https://radiustheme.com/tlp-portfolio-pro-for-wordpress/" class="button button-primary" target="_blank">Get Pro Version</a></p>';
 
             return $html;
+        }
+
+
+        /**
+         * @param     $query
+         * @param int $args
+         * @param     $scMeta
+         *
+         * @return string|null
+         */
+        function pagination($query, $args, $scMeta) {
+            $html = null;
+            $range = isset($args['posts_per_page']) ? $args['posts_per_page'] : 4;
+            $showitems = ($range * 2) + 1;
+            global $paged;
+            if (empty($paged)) {
+                $paged = 1;
+            }
+            $pages = $query->max_num_pages;
+            if (!$pages) {
+                global $wp_query;
+                $pages = $wp_query->max_num_pages;
+                $pages = $pages ? $pages : 1;
+            }
+
+            if (1 != $pages) {
+                $li = null;
+                if (apply_filters('tlp_portfolio_pagination_page_count', true)) {
+                    $li .= sprintf('<li class="disabled hidden-xs"><span><span aria-hidden="true">%s</span></span></li>',
+                        sprintf(__('Page %d of %d', "tlp-portfolio"), $paged, $pages)
+                    );
+                }
+                if ($paged > 2 && $paged > $range + 1 && $showitems < $pages) {
+                    $li .= sprintf('<li><a href="%1$s" aria-label="%2$s">&laquo;<span class="hidden-xs">%2$s</span></a></li>',
+                        get_pagenum_link(1),
+                        __("First", "tlp-portfolio")
+                    );
+                }
+
+                if ($paged > 1 && $showitems < $pages) {
+                    $li .= sprintf('<li><a href="%1$s" aria-label="%2$s">&lsaquo;<span class="hidden-xs">%2$s</span></a></li>',
+                        get_pagenum_link($paged - 1),
+                        __("Previous", "tlp-portfolio")
+                    );
+                }
+
+
+                for ($i = 1; $i <= $pages; $i++) {
+                    if (1 != $pages && (!($i >= $paged + $range + 1 || $i <= $paged - $range - 1) || $pages <= $showitems)) {
+                        $li .= $paged == $i ? sprintf('<li class="active"><span>%d</span></li>', $i)
+                            : sprintf('<li><a href="%s">%d</a></li>', get_pagenum_link($i), $i);
+
+                    }
+
+                }
+
+
+                if ($paged < $pages && $showitems < $pages) {
+                    $li .= sprintf('<li><a href="%1$s" aria-label="%2$s">&lsaquo;<span class="hidden-xs">%2$s </span></a></li>',
+                        get_pagenum_link($paged + 1),
+                        __("Next", "tlp-portfolio")
+                    );
+                }
+
+                if ($paged < $pages - 1 && $paged + $range - 1 < $pages && $showitems < $pages) {
+                    $li .= sprintf('<li><a href="%1$s" aria-label="%2$s">&raquo;<span class="hidden-xs">%2$s </span></a></li>',
+                        get_pagenum_link($pages),
+                        __("Last", "tlp-portfolio")
+                    );
+                }
+
+                $html = sprintf('<div class="tlp-pagination-wrap" data-total-pages="%d" data-posts-per-page="%d">%s</div>',
+                    $query->max_num_pages,
+                    $args['posts_per_page'],
+                    $li ? sprintf('<ul class="tlp-pagination">%s</ul>', $li) : ''
+                );
+
+            }
+
+            return apply_filters('tlp_portfolio_pagination_html', $html, $query, $args, $scMeta);
+
         }
 
     }

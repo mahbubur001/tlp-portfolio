@@ -243,7 +243,7 @@ if ( ! class_exists( 'PortfolioInitRegister' ) ):
 				wp_register_script($handle, $script['src'], $script['deps'], $version, $script['footer']);
 			}
 			foreach ($styles as $k => $v) {
-				wp_register_style($k, $v, false, $version);
+				wp_register_style($k, $v, false, time());
 			}
 		}
 
