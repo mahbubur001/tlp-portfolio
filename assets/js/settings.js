@@ -41,7 +41,7 @@
     }
 
 
-    /* rt tab active navigation */
+    /* rt tab active navigatiosn */
     $("#tlp_portfolio_sc_settings_meta .rt-tab-nav li").on('click', 'a', function (e) {
         e.preventDefault();
         var container = $(this).parents('.rt-tab-container');
