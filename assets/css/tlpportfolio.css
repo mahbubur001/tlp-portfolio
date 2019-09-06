@@ -806,8 +806,8 @@ img.mfp-img {
     margin-right: 5px;
 }
 
-.tlp-portfolio-container .tlp-single-item{
-    margin-bottom  :30px;
+.tlp-portfolio-container .tlp-single-item {
+    margin-bottom: 30px;
 }
 
 .tlp-portfolio .img-responsive {
@@ -834,6 +834,10 @@ img.mfp-img {
     margin-top: 8px;
 }
 
+.tlp-portfolio-container a {
+    text-decoration: none;
+}
+
 /* ============== Pagination ============== */
 
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination {
@@ -841,20 +845,23 @@ img.mfp-img {
     margin: 20px 0;
     justify-content: center;
 }
+
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li {
     display: inline-block;
 }
+
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span:hover,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > span:focus,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a:hover,
-.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a:focus{
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .disabled > a:focus {
     color: #777777;
     background-color: #ffffff;
     border-color: #dddddd;
     cursor: not-allowed;
 }
+
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li > a,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > li > span {
     position: relative;
@@ -865,17 +872,19 @@ img.mfp-img {
     background-color: #ffffff;
     border: 0;
 }
+
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a:hover,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span:hover,
 .tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > a:focus,
-.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span:focus{
+.tlp-portfolio-container .tlp-pagination-wrap .tlp-pagination > .active > span:focus {
     z-index: 3;
     color: #ffffff;
     background-color: #337ab7;
     cursor: default;
 }
+
 /********************* end common css ******************/
 /************************ Layout 1 ******************************/
 .tlp-portfolio .layout1 .tlp-portfolio-thum {
@@ -1208,6 +1217,15 @@ img.mfp-img {
     transform: scale(1.1);
 }
 
+.tlp-portfolio .layout3 h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.tlp-portfolio .layout3 .tlp-content-holder {
+    padding: 15px;
+}
+
 .tlp-portfolio .layout3 .tlp-content2 {
     width: 100%;
     position: relative;
@@ -1499,8 +1517,23 @@ img.mfp-img {
     outline: 0;
 }
 
-.tlp-portfolio-detail {
-    padding-top: 30px;
+/* ==================== Single Portfolio ==================== */
+
+.tlp-portfolio-detail-wrap {
+    display: flex;
+}
+
+.tlp-portfolio-detail-wrap .tlp-portfolio-image {
+    flex: 0 0 50%;
+    margin-right: 15px;
+}
+
+.tlp-portfolio-detail-wrap .portfolio-detail-desc {
+    padding: 15px;
+    flex: 1;
+}
+.tlp-portfolio-detail-wrap ul.single-item-meta li {
+    margin: 8px 0;
 }
 
 @media screen and (max-width: 900px) {
@@ -1513,29 +1546,20 @@ img.mfp-img {
     .fotorama-holder {
         width: 96%;
     }
+
+    .tlp-portfolio-detail-wrap {
+        flex-direction: column;
+    }
+
+    .tlp-portfolio-detail-wrap .tlp-portfolio-image {
+        margin-right: 0;
+        margin-bottom: 25px;
+    }
 }
 
 @media screen and (max-width: 360px) {
     .fotorama-holder {
         width: 100%;
-    }
-}
-
-@media (min-width: 768px) {
-    .container {
-        width: 750px;
-    }
-}
-
-@media (min-width: 992px) {
-    .container {
-        width: 970px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        width: 1170px;
     }
 }
 

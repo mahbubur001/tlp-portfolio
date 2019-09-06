@@ -390,7 +390,7 @@ if (!class_exists('TlpPortfolioField')):
                 $img = "<img src='{$aImg[0]}' >";
                 $c = null;
             } else {
-                $aImg = TLPpPro()->placeholder_img_src();
+                $aImg = TLPPortfolio()->placeholder_img_src();
                 $img = "<img src='{$aImg}' >";
             }
             $h .= "<div class='rt-image-preview'>{$img}<span class='dashicons dashicons-plus-alt rtAddImage'></span><span class='dashicons dashicons-trash rtRemoveImage {$c}'></span></div>";

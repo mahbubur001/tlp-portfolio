@@ -146,6 +146,29 @@
         }
     }
 
+    function useEffectDetailLink() {
+        var item = $(".field-holder.pfp-detail-page-link-item");
+        if ($("#pfp_detail_page_link").is(":checked")) {
+            item.show();
+        } else {
+            item.hide();
+        }
+    }
+
+    function useEffectDetailLinkType() {
+        if ($("#pfp_detail_page_link").is(":checked")) {
+            var val = $("#pfp_detail_page_link_type").find("input[name=pfp_detail_page_link_type]:checked").val(),
+                item = $("#pfp_link_target_holder");
+            if (val == "external_link") {
+                item.show();
+            } else {
+                item.hide();
+            }
+        } else {
+            $(".field-holder.pfp-detail-page-link-item").hide();
+        }
+    }
+
     function useEffectLayout() {
         var layout = $("#pfp_layout").val(),
             isIsotope = false,
@@ -172,29 +195,16 @@
             }
         }
 
-        var pagination = $("#pfp_pagination").is(':checked');
-        if (pagination && !isCarousel) {
+
+        if ($("#pfp_pagination").is(':checked') && !isCarousel) {
             $(".field-holder.pfp-pagination-item").show();
         } else {
             $(".field-holder.pfp-pagination-item").hide();
         }
 
-        var page_link = $("#pfp_detail_page_link").is(':checked');
-        if (page_link) {
-            $("#pfp_detail_page_link_type_holder").show();
-        } else {
-            $("#pfp_detail_page_link_type_holder").hide();
-        }
-
-        var link_target = $("#pfp_detail_page_link_type").find("input[name=pfp_detail_page_link_type]:checked").val();
-        if (link_target == "external_link") {
-            $("#pfp_link_target_holder").show();
-        } else {
-            $("#pfp_link_target_holder").hide();
-        }
-
         useEffectImageSize();
-
+        useEffectDetailLink();
+        useEffectDetailLinkType();
     }
 
     function AjaxCall(element, action, arg, handle) {
@@ -230,7 +240,7 @@
         if (n < 0) {
             data = data + "&" + tlp_portfolio_obj.nonceId + "=" + tlp_portfolio_obj.nonce;
         }
-        var previewHolder = $('#pfp_sc_preview_meta'),
+        var previewHolder = $('#pfp-preview-container'),
             response = $('#pfp-response .spinner');
         $.ajax({
             type: "post",
@@ -286,21 +296,10 @@
     });
 
     $("#pfp_detail_page_link").on('change', function () {
-        var item = $("#pfp_detail_page_link_type_holder");
-        if (this.checked) {
-            item.show();
-        } else {
-            item.hide();
-        }
+        useEffectDetailLink();
     });
     $("#pfp_detail_page_link_type").on("click", "input[type='radio']", function () {
-        var val = $("#pfp_detail_page_link_type").find("input[name=pfp_detail_page_link_type]:checked").val(),
-            item = $("#pfp_link_target_holder");
-        if (val == "external_link") {
-            item.show();
-        } else {
-            item.hide();
-        }
+        useEffectDetailLinkType();
     });
 
     $("#tlp_portfolio_sc_settings_meta").on('change', 'select,input', function () {

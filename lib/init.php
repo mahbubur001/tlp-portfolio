@@ -67,6 +67,10 @@ if ( ! class_exists( 'TLPPortfolio' ) ):
 			$this->insertDefaultData();
 		}
 
+		public function placeholder_img_src() {
+			return $this->assetsUrl . 'images/demo.jpg';
+		}
+
 		public function deactivate() {
 			flush_rewrite_rules();
 		}
