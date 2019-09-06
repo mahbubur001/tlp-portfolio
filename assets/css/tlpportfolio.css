@@ -1226,30 +1226,31 @@ img.mfp-img {
     padding: 15px;
 }
 
-.tlp-portfolio .layout3 .tlp-content2 {
+.tlp-portfolio .layout3 .tlp-content {
     width: 100%;
     position: relative;
 }
 
-.tlp-portfolio .layout3 .tlp-content2 h3 {
-    margin: 15px 0px 10px;
+.tlp-portfolio .layout3 .tlp-content h3 {
+    margin: 0;
+    padding: 15px;
     font-size: 24px;
     font-weight: 400;
     text-decoration: none;
 }
 
-.tlp-portfolio .layout3 .tlp-content2 h3 a {
+.tlp-portfolio .layout3 .tlp-content h3 a {
     text-decoration: none;
     border: none;
     box-shadow: none;
 }
 
-.tlp-portfolio .layout3 .tlp-content2 p {
-    padding: 0 0px 6px;
+.tlp-portfolio .layout3 .tlp-content p {
+    padding: 0 0 6px;
     margin: 0;
 }
 
-.tlp-portfolio .layout3 .tlp-content2 .tlp-content-holder {
+.tlp-portfolio .layout3 .tlp-content .tlp-content-holder {
     padding: 0;
 }
 

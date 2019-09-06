@@ -11,7 +11,7 @@ if ( ! class_exists( 'TLPPortfolioSingleItem' ) ):
 
 		}
 
-		function portfolio_body_classes( $classes ) {
+		public static function portfolio_body_classes( $classes ) {
 
 			if ( is_singular( TLPPortfolio()->post_type ) || is_post_type_archive( TLPPortfolio()->post_type ) ) {
 				$classes[] = 'tlp-portfolio';
