@@ -14,18 +14,19 @@ if ( ! class_exists( 'TLPPortfolioOptions' ) ) :
 				),
 				'pfp_isotope_filter_taxonomy'   => array(
 					"type"        => "select",
-					"label"       => __( "Isotope filter", 'tlp-portfolio' ),
+					"label"       => __( "Isotope filter <span style='color:red;'>Pro feature</span>", 'tlp-portfolio' ),
 					'holderClass' => "pfp-isotope-item pfp-hidden",
 					"class"       => "rt-select2",
-					"options"     => $this->isotope_filter_taxonomy()
+					'attr'        => 'disabled'
 				),
 				'pfp_isotope_filter_show_all'   => array(
 					"type"        => "checkbox",
-					"label"       => "Isotope filter (Show All item)",
+					"label"       => __( "Isotope filter (Show All item) <span style='color:red;'>Pro feature</span>", "tlp-portfolio" ),
 					'holderClass' => "pfp-isotope-item pfp-hidden",
 					"id"          => "rt-tpg-sc-isotope-filter-show-all",
 					"optionLabel" => __( 'Disable', 'tlp-portfolio' ),
-					"option"      => 1
+					"option"      => 1,
+					'attr'        => 'disabled'
 				),
 				'pfp_carousel_items_per_slider' => array(
 					"label"       => __( "Number of items", 'tlp-portfolio' ),
@@ -151,58 +152,58 @@ if ( ! class_exists( 'TLPPortfolioOptions' ) ) :
 		function scFilterMetaFields() {
 			return array(
 				'pfp_post__in'          => array(
-					"label"       => __( "Include only", 'tlp-portfolio-pro' ),
+					"label"       => __( "Include only", 'tlp-portfolio' ),
 					"type"        => "text",
 					"description" => __( 'List of post IDs to show (comma-separated values, for example: 1,2,3)',
-						'tlp-portfolio-pro' )
+						'tlp-portfolio' )
 				),
 				'pfp_post__not_in'      => array(
-					"label"       => __( "Exclude", 'tlp-portfolio-pro' ),
+					"label"       => __( "Exclude", 'tlp-portfolio' ),
 					"type"        => "text",
 					"description" => __( 'List of post IDs to show (comma-separated values, for example: 1,2,3)',
-						'tlp-portfolio-pro' )
+						'tlp-portfolio' )
 				),
 				'pfp_limit'             => array(
-					"label"       => __( "Limit", 'tlp-portfolio-pro' ),
+					"label"       => __( "Limit", 'tlp-portfolio' ),
 					"type"        => "number",
 					"description" => __( 'The number of posts to show. Set empty to show all found posts.',
-						'tlp-portfolio-pro' )
+						'tlp-portfolio' )
 				),
 				'pfp_categories'        => array(
-					"label"       => __( "Categories", 'tlp-portfolio-pro' ),
+					"label"       => __( "Categories", 'tlp-portfolio' ),
 					"type"        => "select",
 					"class"       => "rt-select2",
 					"multiple"    => true,
 					"description" => __( 'Select the category you want to filter, Leave it blank for All category',
-						'tlp-portfolio-pro' ),
+						'tlp-portfolio' ),
 					"options"     => TLPPortfolio()->getAllPortFolioCategoryList()
 				),
 				'pfp_tags'              => array(
-					"label"       => __( "Tags", 'tlp-portfolio-pro' ),
+					"label"       => __( "Tags", 'tlp-portfolio' ),
 					"type"        => "select",
 					"class"       => "rt-select2",
 					"multiple"    => true,
 					"description" => __( 'Select the category you want to filter, Leave it blank for All category',
-						'tlp-portfolio-pro' ),
+						'tlp-portfolio' ),
 					"options"     => TLPPortfolio()->getAllPortFolioTagList()
 				),
 				'pfp_taxonomy_relation' => array(
-					"label"       => __( "Taxonomy relation", 'tlp-portfolio-pro' ),
+					"label"       => __( "Taxonomy relation", 'tlp-portfolio' ),
 					"type"        => "select",
 					"class"       => "rt-select2",
 					"description" => __( 'Select this option if you select more than one taxonomy like category and tag, or category , tag and tools',
-						'tlp-portfolio-pro' ),
+						'tlp-portfolio' ),
 					"options"     => $this->scTaxonomyRelation()
 				),
 				'pfp_order_by'          => array(
-					"label"   => __( "Order By", 'tlp-portfolio-pro' ),
+					"label"   => __( "Order By", 'tlp-portfolio' ),
 					"type"    => "select",
 					"class"   => "rt-select2",
 					"default" => "date",
 					"options" => $this->scOrderBy()
 				),
 				'pfp_order'             => array(
-					"label"     => __( "Order", 'tlp-portfolio-pro' ),
+					"label"     => __( "Order", 'tlp-portfolio' ),
 					"type"      => "radio",
 					"options"   => $this->scOrder(),
 					"default"   => "DESC",
@@ -215,46 +216,51 @@ if ( ! class_exists( 'TLPPortfolioOptions' ) ) :
 			return array(
 				'pfp_parent_class'            => array(
 					"type"        => "text",
-					"label"       => __( "Parent class", 'tlp-portfolio-pro' ),
+					"label"       => __( "Parent class", 'tlp-portfolio' ),
 					"class"       => "medium-text",
-					"description" => __( "Parent class for adding custom css", 'tlp-portfolio-pro' )
+					"description" => __( "Parent class for adding custom css", 'tlp-portfolio' )
 				),
 				'pfp_primary_color'           => array(
 					"type"  => "colorpicker",
-					"label" => __( "Primary Color", 'tlp-portfolio-pro' ),
+					"label" => __( "Primary Color", 'tlp-portfolio' ),
+					"alpha" => true,
+				),
+				'pfp_overlay_color'           => array(
+					"type"  => "colorpicker",
+					"label" => __( "Overlay color", 'tlp-portfolio' ),
 					"alpha" => true,
 				),
 				'pfp_button_bg_color'         => array(
 					"type"  => "colorpicker",
-					"label" => __( "Button background color", 'tlp-portfolio-pro' ),
+					"label" => __( "Button background color", 'tlp-portfolio' ),
 				),
 				'pfp_button_hover_bg_color'   => array(
 					"type"  => "colorpicker",
-					"label" => __( "Button hover background color", 'tlp-portfolio-pro' ),
+					"label" => __( "Button hover background color", 'tlp-portfolio' ),
 				),
 				'pfp_button_active_bg_color'  => array(
 					"type"  => "colorpicker",
-					"label" => __( "Button active background color", 'tlp-portfolio-pro' ),
+					"label" => __( "Button active background color", 'tlp-portfolio' ),
 				),
 				'pfp_button_text_color'       => array(
 					"type"  => "colorpicker",
-					"label" => __( "Button text color", 'tlp-portfolio-pro' ),
+					"label" => __( "Button text color", 'tlp-portfolio' ),
 				),
 				'pfp_name_style'              => array(
 					'type'  => 'style',
-					'label' => __( 'Name', 'tlp-portfolio-pro' ),
+					'label' => __( 'Name', 'tlp-portfolio' ),
 				),
 				'pfp_short_description_style' => array(
 					'type'  => 'style',
-					'label' => __( 'Short description', 'tlp-portfolio-pro' )
+					'label' => __( 'Short description', 'tlp-portfolio' )
 				)
 			);
 		}
 
 		function imageCropType() {
 			return array(
-				'soft' => __( "Soft Crop", 'tlp-portfolio-pro' ),
-				'hard' => __( "Hard Crop", 'tlp-portfolio-pro' )
+				'soft' => __( "Soft Crop", 'tlp-portfolio' ),
+				'hard' => __( "Hard Crop", 'tlp-portfolio' )
 			);
 		}
 
@@ -295,14 +301,14 @@ if ( ! class_exists( 'TLPPortfolioOptions' ) ) :
 
 		function owlProperty() {
 			return array(
-				'loop'               => __( 'Loop', 'tlp-portfolio-pro' ),
-				'autoplay'           => __( 'Auto Play', 'tlp-portfolio-pro' ),
-				'autoplayHoverPause' => __( 'Pause on mouse hover', 'tlp-portfolio-pro' ),
-				'nav'                => __( 'Nav Button', 'tlp-portfolio-pro' ),
-				'dots'               => __( 'Pagination', 'tlp-portfolio-pro' ),
-				'auto_height'        => __( 'Auto Height', 'tlp-portfolio-pro' ),
-				'lazy_load'          => __( 'Lazy Load', 'tlp-portfolio-pro' ),
-				'rtl'                => __( 'Right to left (RTL)', 'tlp-portfolio-pro' )
+				'loop'               => __( 'Loop', 'tlp-portfolio' ),
+				'autoplay'           => __( 'Auto Play', 'tlp-portfolio' ),
+				'autoplayHoverPause' => __( 'Pause on mouse hover', 'tlp-portfolio' ),
+				'nav'                => __( 'Nav Button', 'tlp-portfolio' ),
+				'dots'               => __( 'Pagination', 'tlp-portfolio' ),
+				'auto_height'        => __( 'Auto Height', 'tlp-portfolio' ),
+				'lazy_load'          => __( 'Lazy Load', 'tlp-portfolio' ),
+				'rtl'                => __( 'Right to left (RTL)', 'tlp-portfolio' )
 			);
 		}
 

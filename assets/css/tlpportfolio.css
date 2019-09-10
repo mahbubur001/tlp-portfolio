@@ -991,7 +991,7 @@ img.mfp-img {
 }
 
 .tlp-portfolio .layout1 .tlp-content .tlp-content-holder {
-    padding: 15px;
+    padding: 15px 0;
     display: block;
 }
 
@@ -1222,10 +1222,6 @@ img.mfp-img {
     margin: 0;
 }
 
-.tlp-portfolio .layout3 .tlp-content-holder {
-    padding: 15px;
-}
-
 .tlp-portfolio .layout3 .tlp-content {
     width: 100%;
     position: relative;
@@ -1233,7 +1229,7 @@ img.mfp-img {
 
 .tlp-portfolio .layout3 .tlp-content h3 {
     margin: 0;
-    padding: 15px;
+    padding: 0;
     font-size: 24px;
     font-weight: 400;
     text-decoration: none;
@@ -1251,7 +1247,7 @@ img.mfp-img {
 }
 
 .tlp-portfolio .layout3 .tlp-content .tlp-content-holder {
-    padding: 0;
+    padding: 15px 0;
 }
 
 /************************ Isotope 1 ******************************/

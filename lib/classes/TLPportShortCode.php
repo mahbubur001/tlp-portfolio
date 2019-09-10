@@ -60,14 +60,12 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$limit        = $query_args['posts_per_page'] = ! isset( $scMeta['pfp_limit'] ) || ( isset( $scMeta['pfp_limit'] ) && ( empty( $scMeta['pfp_limit'] ) || $scMeta['pfp_limit'] === '-1' ) ) ? 10000000 : (int) $scMeta['pfp_limit'];
 						$pagination   = isset( $scMeta['pfp_pagination'] ) && ! empty( $scMeta['pfp_pagination'] ) ? true : false;
 
-						$cats                     = isset( $scMeta['pfp_categories'] ) && ! empty( $scMeta['pfp_categories'] ) ? array_filter( $scMeta['pfp_categories'] ) : array();
-						$tags                     = isset( $scMeta['pfp_tags'] ) && ! empty( $scMeta['pfp_tags'] ) ? array_filter( $scMeta['pfp_tags'] ) : array();
-						$relation                 = isset( $scFMeta['pfp_taxonomy_relation'] ) && ! empty( $scFMeta['pfp_taxonomy_relation'] ) ? $scFMeta['pfp_taxonomy_relation'] : "AND";
-						$order_by                 = isset( $scMeta['pfp_order_by'] ) && ! empty( $scMeta['pfp_order_by'] ) ? $scMeta['pfp_order_by'] : null;
-						$order                    = isset( $scMeta['pfp_order'] ) && ! empty( $scMeta['pfp_order'] ) ? $scMeta['pfp_order'] : null;
-						$parentClass              = isset( $scMeta['pfp_parent_class'] ) && ! empty( $scMeta['pfp_parent_class'] ) ? trim( $scMeta['pfp_parent_class'] ) : null;
-						$isotope_filter_taxonomy  = isset( $scMeta['pfp_isotope_filter_taxonomy'] ) && ! empty( $scMeta['pfp_isotope_filter_taxonomy'] ) ? trim( $scMeta['pfp_isotope_filter_taxonomy'] ) : TLPPortfolio()->taxonomies['category'];
-						$isotope_show_all_disable = isset( $scMeta['pfp_isotope_filter_show_all'] ) && ! empty( $scMeta['pfp_isotope_filter_show_all'] ) ? true : false;
+						$cats        = isset( $scMeta['pfp_categories'] ) && ! empty( $scMeta['pfp_categories'] ) ? array_filter( $scMeta['pfp_categories'] ) : array();
+						$tags        = isset( $scMeta['pfp_tags'] ) && ! empty( $scMeta['pfp_tags'] ) ? array_filter( $scMeta['pfp_tags'] ) : array();
+						$relation    = isset( $scFMeta['pfp_taxonomy_relation'] ) && ! empty( $scFMeta['pfp_taxonomy_relation'] ) ? $scFMeta['pfp_taxonomy_relation'] : "AND";
+						$order_by    = isset( $scMeta['pfp_order_by'] ) && ! empty( $scMeta['pfp_order_by'] ) ? $scMeta['pfp_order_by'] : null;
+						$order       = isset( $scMeta['pfp_order'] ) && ! empty( $scMeta['pfp_order'] ) ? $scMeta['pfp_order'] : null;
+						$parentClass = isset( $scMeta['pfp_parent_class'] ) && ! empty( $scMeta['pfp_parent_class'] ) ? trim( $scMeta['pfp_parent_class'] ) : null;
 
 						$arg['link']        = isset( $scMeta['pfp_detail_page_link'] ) && ! empty( $scMeta['pfp_detail_page_link'] );
 						$arg['link_type']   = isset( $scMeta['pfp_detail_page_link_type'] ) && ! empty( $scMeta['pfp_detail_page_link_type'] ) ? $scMeta['pfp_detail_page_link_type'] : 'inner_link';
@@ -89,15 +87,12 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$limit        = $query_args['posts_per_page'] = ! isset( $scMeta['pfp_limit'][0] ) || ( isset( $scMeta['pfp_limit'][0] ) && ( empty( $scMeta['pfp_limit'][0] ) || $scMeta['pfp_limit'][0] === '-1' ) ) ? 10000000 : (int) $scMeta['pfp_limit'][0];
 						$pagination   = isset( $scMeta['pfp_pagination'][0] ) && ! empty( $scMeta['pfp_pagination'][0] ) ? true : false;
 
-						$cats                     = isset( $scMeta['pfp_categories'] ) && ! empty( $scMeta['pfp_categories'] ) ? array_filter( $scMeta['pfp_categories'] ) : array();
-						$tags                     = isset( $scMeta['pfp_tags'] ) && ! empty( $scMeta['pfp_tags'] ) ? array_filter( $scMeta['pfp_tags'] ) : array();
-						$relation                 = isset( $scFMeta['pfp_taxonomy_relation'][0] ) && ! empty( $scFMeta['pfp_taxonomy_relation'][0] ) ? $scFMeta['pfp_taxonomy_relation'][0] : "AND";
-						$order_by                 = isset( $scMeta['pfp_order_by'][0] ) && ! empty( $scMeta['pfp_order_by'][0] ) ? $scMeta['pfp_order_by'][0] : null;
-						$order                    = isset( $scMeta['pfp_order'][0] ) && ! empty( $scMeta['pfp_order'][0] ) ? $scMeta['pfp_order'][0] : null;
-						$parentClass              = isset( $scMeta['pfp_parent_class'][0] ) && ! empty( $scMeta['pfp_parent_class'][0] ) ? trim( $scMeta['pfp_parent_class'][0] ) : null;
-						$isotope_filter_taxonomy  = isset( $scMeta['pfp_isotope_filter_taxonomy'][0] ) && ! empty( $scMeta['pfp_isotope_filter_taxonomy'][0] ) ? trim( $scMeta['pfp_isotope_filter_taxonomy'][0] ) : TLPPortfolio()->taxonomies['category'];
-						$isotope_show_all_disable = isset( $scMeta['pfp_isotope_filter_show_all'][0] ) && ! empty( $scMeta['pfp_isotope_filter_show_all'][0] ) ? true : false;
-
+						$cats        = isset( $scMeta['pfp_categories'] ) && ! empty( $scMeta['pfp_categories'] ) ? array_filter( $scMeta['pfp_categories'] ) : array();
+						$tags        = isset( $scMeta['pfp_tags'] ) && ! empty( $scMeta['pfp_tags'] ) ? array_filter( $scMeta['pfp_tags'] ) : array();
+						$relation    = isset( $scFMeta['pfp_taxonomy_relation'][0] ) && ! empty( $scFMeta['pfp_taxonomy_relation'][0] ) ? $scFMeta['pfp_taxonomy_relation'][0] : "AND";
+						$order_by    = isset( $scMeta['pfp_order_by'][0] ) && ! empty( $scMeta['pfp_order_by'][0] ) ? $scMeta['pfp_order_by'][0] : null;
+						$order       = isset( $scMeta['pfp_order'][0] ) && ! empty( $scMeta['pfp_order'][0] ) ? $scMeta['pfp_order'][0] : null;
+						$parentClass = isset( $scMeta['pfp_parent_class'][0] ) && ! empty( $scMeta['pfp_parent_class'][0] ) ? trim( $scMeta['pfp_parent_class'][0] ) : null;
 
 						$arg['link']        = isset( $scMeta['pfp_detail_page_link'][0] ) && ! empty( $scMeta['pfp_detail_page_link'][0] );
 						$arg['link_type']   = isset( $scMeta['pfp_detail_page_link_type'][0] ) && ! empty( $scMeta['pfp_detail_page_link_type'][0] ) ? $scMeta['pfp_detail_page_link_type'][0] : 'inner_link';
@@ -230,17 +225,14 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$html .= sprintf( '<div class="%s" id="%s"><div class="rt-row %s">', implode( ' ', $class ), $layoutID, $layout );
 						if ( $isIsotope ) {
 							$terms = get_terms( apply_filters( 'tlp_portfolio_sc_isotope_button_args', array(
-								'taxonomy'   => $isotope_filter_taxonomy,
+								'taxonomy'   => TLPPortfolio()->taxonomies['category'],
 								'orderby'    => 'name',
 								'order'      => 'ASC',
 								'hide_empty' => false,
 							) ) );
 
 							if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-								$html .= '<div class="tlp-portfolio-isotope-button button-group filter-button-group option-set">';
-								if ( ! $isotope_show_all_disable ) {
-									$html .= sprintf( '<button data-filter="*" class="selected">%s</button>', __( "Show all", "tlp-portfolio" ) );
-								}
+								$html .= sprintf( '<div class="tlp-portfolio-isotope-button button-group filter-button-group option-set"><button data-filter="*" class="selected">%s</button>', __( "Show all", "tlp-portfolio" ) );
 								foreach ( $terms as $term ) {
 									if ( ! empty( $cat_ids ) ) {
 										if ( in_array( $term->term_id, $cat_ids ) ) {
@@ -453,6 +445,7 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 			if ( $new_layout ) {
 				if ( $preview ) {
 					$primaryColor        = isset( $scMeta['pfp_primary_color'] ) && ! empty( $scMeta['pfp_primary_color'] ) ? $scMeta['pfp_primary_color'] : null;
+					$overlayColor        = isset( $scMeta['pfp_overlay_color'] ) && ! empty( $scMeta['pfp_overlay_color'] ) ? $scMeta['pfp_overlay_color'] : null;
 					$buttonBgColor       = isset( $scMeta['pfp_button_bg_color'] ) && ! empty( $scMeta['pfp_button_bg_color'] ) ? $scMeta['pfp_button_bg_color'] : null;
 					$buttonTxtColor      = isset( $scMeta['pfp_button_text_color'] ) && ! empty( $scMeta['pfp_button_text_color'] ) ? $scMeta['pfp_button_text_color'] : null;
 					$buttonHoverBgColor  = isset( $scMeta['pfp_button_hover_bg_color'] ) && ! empty( $scMeta['pfp_button_hover_bg_color'] ) ? $scMeta['pfp_button_hover_bg_color'] : null;
@@ -462,6 +455,7 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 
 				} else {
 					$primaryColor        = isset( $scMeta['pfp_primary_color'][0] ) && ! empty( $scMeta['pfp_primary_color'][0] ) ? $scMeta['pfp_primary_color'][0] : null;
+					$overlayColor        = isset( $scMeta['pfp_overlay_color'][0] ) && ! empty( $scMeta['pfp_overlay_color'][0] ) ? $scMeta['pfp_overlay_color'][0] : null;
 					$buttonBgColor       = isset( $scMeta['pfp_button_bg_color'][0] ) && ! empty( $scMeta['pfp_button_bg_color'][0] ) ? $scMeta['pfp_button_bg_color'][0] : null;
 					$buttonTxtColor      = isset( $scMeta['pfp_button_text_color'][0] ) && ! empty( $scMeta['pfp_button_text_color'][0] ) ? $scMeta['pfp_button_text_color'][0] : null;
 					$buttonHoverBgColor  = isset( $scMeta['pfp_button_hover_bg_color'][0] ) && ! empty( $scMeta['pfp_button_hover_bg_color'][0] ) ? $scMeta['pfp_button_hover_bg_color'][0] : null;
@@ -475,12 +469,14 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 					$style .= "#{$layoutID} .tlp-pagination ul.page-numbers li .page-numbers {";
 					$style .= "background:" . $primaryColor . ";";
 					$style .= "}";
-					$style .= "#{$layoutID} .tlp-portfolio-item .tlp-content,
-                                #{$layoutID} .tlp-overlay {";
+					$style .= "#{$layoutID} .tlp-portfolio-item .tlp-content{";
 					$style .= "background:" . $primaryColor . ";";
 					$style .= "}";
-					$style .= "#{$layoutID} .tlp-portfolio-item .tlp-overlay h3{";
-					$style .= "border-color:" . $primaryColor . ";";
+					$style .= "#{$layoutID} .tlp-portfolio-item .tlp-content .tlp-content-holder{padding:15px}";
+				}
+				if ( $overlayColor ) {
+					$style .= "#{$layoutID} .tlp-overlay {";
+					$style .= "background:" . $overlayColor . ";";
 					$style .= "}";
 				}
 
