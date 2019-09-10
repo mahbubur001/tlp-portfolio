@@ -14,7 +14,7 @@ $settings    = get_option( TLPPortfolio()->options['settings'] );
 		<?php } ?>
         <div class="portfolio-detail-desc">
             <h2 class="portfolio-title"><?php the_title(); ?></h2>
-            <div class="portfolio-details"><?php $content; ?></div>
+            <div class="portfolio-details"><?php echo $content; ?></div>
             <div class="others-info">
 				<?php echo TLPPortfolio()->singlePortfolioMeta( $post->ID ); ?>
             </div>

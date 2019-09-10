@@ -145,7 +145,13 @@ if ( ! class_exists( 'TLPPortfolioOptions' ) ) :
 						'_self'  => 'Same Window',
 						'_blank' => 'New Window'
 					)
-				)
+				),
+				'pfp_disable_equal_height'      => array(
+					"type"        => "checkbox",
+					"label"       => __( "Disable equal height", 'tlp-portfolio' ),
+					'option'      => 1,
+					"optionLabel" => __( "Disable", 'tlp-portfolio' ),
+				),
 			);
 		}
 

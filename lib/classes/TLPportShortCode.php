@@ -71,6 +71,8 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$arg['link_type']   = isset( $scMeta['pfp_detail_page_link_type'] ) && ! empty( $scMeta['pfp_detail_page_link_type'] ) ? $scMeta['pfp_detail_page_link_type'] : 'inner_link';
 						$arg['link_target'] = $arg['link_type'] == 'external_link' && isset( $scMeta['pfp_link_target'] ) && $scMeta['pfp_link_target'] == '_blank' ? '_blank' : null;
 
+						$disable_equal_height = isset( $scMeta['pfp_disable_equal_height'] ) && ! empty( $scMeta['pfp_disable_equal_height'] );
+
 					} else {
 						$scMeta        = get_post_meta( $scID );
 						$layout        = isset( $scMeta['pfp_layout'][0] ) && ! empty( $scMeta['pfp_layout'][0] ) ? $scMeta['pfp_layout'][0] : 'layout1';
@@ -94,10 +96,10 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$order       = isset( $scMeta['pfp_order'][0] ) && ! empty( $scMeta['pfp_order'][0] ) ? $scMeta['pfp_order'][0] : null;
 						$parentClass = isset( $scMeta['pfp_parent_class'][0] ) && ! empty( $scMeta['pfp_parent_class'][0] ) ? trim( $scMeta['pfp_parent_class'][0] ) : null;
 
-						$arg['link']        = isset( $scMeta['pfp_detail_page_link'][0] ) && ! empty( $scMeta['pfp_detail_page_link'][0] );
-						$arg['link_type']   = isset( $scMeta['pfp_detail_page_link_type'][0] ) && ! empty( $scMeta['pfp_detail_page_link_type'][0] ) ? $scMeta['pfp_detail_page_link_type'][0] : 'inner_link';
-						$arg['link_target'] = $arg['link_type'] == 'external_link' && isset( $scMeta['pfp_link_target'][0] ) && $scMeta['pfp_link_target'][0] == '_blank' ? '_blank' : null;
-
+						$arg['link']          = isset( $scMeta['pfp_detail_page_link'][0] ) && ! empty( $scMeta['pfp_detail_page_link'][0] );
+						$arg['link_type']     = isset( $scMeta['pfp_detail_page_link_type'][0] ) && ! empty( $scMeta['pfp_detail_page_link_type'][0] ) ? $scMeta['pfp_detail_page_link_type'][0] : 'inner_link';
+						$arg['link_target']   = $arg['link_type'] == 'external_link' && isset( $scMeta['pfp_link_target'][0] ) && $scMeta['pfp_link_target'][0] == '_blank' ? '_blank' : null;
+						$disable_equal_height = isset( $scMeta['pfp_disable_equal_height'][0] ) && ! empty( $scMeta['pfp_disable_equal_height'][0] );
 					}
 
 					if ( ! in_array( $layout, array_keys( TLPPortfolio()->scLayouts() ) ) ) {
@@ -190,10 +192,11 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 						$dCol = $tCol = $mCol = 12;
 					}
 
-					$arg['grid'] = sprintf( 'tlp-col-lg-%d tlp-col-md-%d tlp-col-sm-%d tlp-col-xs-12 tlp-single-item%s%s%s', $dCol, $tCol, $mCol,
+					$arg['grid'] = sprintf( 'tlp-col-lg-%d tlp-col-md-%d tlp-col-sm-%d tlp-col-xs-12 tlp-single-item%s%s%s%s', $dCol, $tCol, $mCol,
 						$isIsotope ? ' tlp-isotope-item' : null,
-						$isCarousel ? ' tlp-carousel-item tlp-equal-height' : null,
-						$isLayout ? ' tlp-grid-item tlp-equal-height' : null
+						$isCarousel ? ' tlp-carousel-item' : null,
+						$isLayout ? ' tlp-grid-item' : null,
+						! $isIsotope && ! $disable_equal_height ? ' tlp-equal-height' : null
 					);
 
 
@@ -462,7 +465,6 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 					$buttonActiveBgColor = isset( $scMeta['pfp_button_active_bg_color'][0] ) && ! empty( $scMeta['pfp_button_active_bg_color'][0] ) ? $scMeta['pfp_button_active_bg_color'][0] : null;
 					$name                = isset( $scMeta['pfp_name_style'][0] ) && ! empty( $scMeta['pfp_name_style'][0] ) ? @unserialize( $scMeta['pfp_name_style'][0] ) : array();
 					$short_desc          = isset( $scMeta['pfp_short_description_style'][0] ) && ! empty( $scMeta['pfp_short_description_style'][0] ) ? @unserialize( $scMeta['pfp_short_description_style'][0] ) : array();
-
 				}
 
 				if ( $primaryColor ) {
