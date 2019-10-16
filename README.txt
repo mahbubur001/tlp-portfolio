@@ -4,7 +4,7 @@ Donate link:
 Tags: portfolio, portfolio plugin, wordpress portfolio plugin, filterable portfolio, best portfolio, best wp portfolio, gallery, portfolio gallery, photo gallery, image display, creative portfolio, portfolio display, portfolio slider, responsive portfolio, portfolio showcase.
 Requires at least: 4
 Tested up to: 5.2
-Stable tag: 2.6.35
+Stable tag: 2.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -186,6 +186,10 @@ For any bug or suggestion please mail us: support@radiustheme.com
 
 
 == Changelog ==
+
+= 2.7.0 =
+* add Dynamic shortcode generator
+* Layout preview
 
 = 2.6.35 =
 * Fix Short description html tag error
