@@ -3,9 +3,9 @@ if (!defined('WPINC')) {
     die;
 }
 
-if (!class_exists('TLPPortfolioGutenBurg')):
+if (!class_exists( 'TLPPortfolioGutenBerg' )):
 
-    class TLPPortfolioGutenBurg
+    class TLPPortfolioGutenBerg
     {
         protected $version;
 
