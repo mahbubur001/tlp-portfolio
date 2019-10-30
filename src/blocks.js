@@ -4,14 +4,70 @@ import './scss/editor.scss';
 
 const {__} = wp.i18n;
 const {registerBlockType} = wp.blocks;
-const {SelectControl, PanelBody, PanelRow, TextControl, CheckboxControl} = wp.components;
+const {SelectControl, PanelBody, TextControl, CheckboxControl} = wp.components;
 const {InspectorControls, ColorPalette} = wp.editor;
+registerBlockType('rt-portfolio/tlp-portfolio-pro', {
+    title: __('TLP Portfolio', "tlp-portfolio"),
+    icon: 'grid-view',
+    category: 'common',
+    description: __('This is the tlp portfolio settings section', "the-portfolio"),
+    keywords: [
+        __('Tlp Portfolio Pro', "tlp-portfolio"),
+        __('tlp-portfolio', "tlp-portfolio"),
+    ],
+    attributes: {
+        gridId: {
+            type: 'number',
+            default: 0,
+        }
+    },
+    edit: function (props) {
+        let {attributes: {gridId}, setAttributes} = props;
+        let gridTitle = "";
+        let options = [{value: 0, label: __("Select one", "tlp-portfolio")}];
+        if (rtPortfolio.short_codes) {
+            for (const [id, title] of Object.entries(rtPortfolio.short_codes)) {
+                options.push({
+                    value: id,
+                    label: title
+                });
+                if (gridId && Number(id) === gridId) {
+                    gridTitle = title;
+                }
+            }
+        }
+        return (
+            [
+                <InspectorControls>
+                    <PanelBody title={__('ShortCode', 'tlp-portfolio')} initialOpen={true}>
+                        <SelectControl
+                            label={__('Select a grid:', "tlp-portfolio")}
+                            options={options}
+                            value={gridId}
+                            onChange={(val) => setAttributes({gridId: Number(val)})}
+                        />
+                    </PanelBody>
+                </InspectorControls>
+                ,
+                <div className={props.className}>
+                    {!gridId ? (<p>{__("Please select a shortcode from block settings", "tlp-portfolio")}</p>) : (
+                        <div><span><img style={{verticalAlign: 'middle'}} src={rtPortfolio.icon}/></span> <span>{__('TLP Portfolio', "tlp-portfolio")} ( {gridTitle} )</span></div>
+                    )}
+                </div>
+            ]
+        );
+    },
+
+    save: function () {
+        return null;
+    },
+});
 
 registerBlockType('radiustheme/tlp-portfolio', {
-    title: __('Tlp Portfolio', "tlp-portfolio"),
+    title: __('TLP Portfolio (Deprecated)', "tlp-portfolio"),
     icon: 'grid-view',
-    description: __('Settings section', "tlp-portfolio"),
-    category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
+    description: __('This shortcode is deprecated and this will remove end of this year (2019). Please use our new Block (TLP Portfolio)', "tlp-portfolio"),
+    category: 'common',
     keywords: [
         __('Tlp Portfolio', "tlp-portfolio"),
         __('tlp-portfolio', "tlp-portfolio"),
@@ -96,64 +152,64 @@ registerBlockType('radiustheme/tlp-portfolio', {
         let fontWeights = [{value: null, label: __("Default", "tlp-portfolio")}];
         let fontSizes = [{value: null, label: __("Default", "tlp-portfolio")}];
         let catList = [{value: 0, label: __("All", "tlp-portfolio")}];
-        if (tlpPortfolio.layout) {
-            for (const [id, title] of Object.entries(tlpPortfolio.layout)) {
+        if (rtPortfolio.layout) {
+            for (const [id, title] of Object.entries(rtPortfolio.layout)) {
                 layouts.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.column) {
-            for (const [id, title] of Object.entries(tlpPortfolio.column)) {
+        if (rtPortfolio.column) {
+            for (const [id, title] of Object.entries(rtPortfolio.column)) {
                 columns.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.orderby) {
-            for (const [id, title] of Object.entries(tlpPortfolio.orderby)) {
+        if (rtPortfolio.orderby) {
+            for (const [id, title] of Object.entries(rtPortfolio.orderby)) {
                 orderByS.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.order) {
-            for (const [id, title] of Object.entries(tlpPortfolio.order)) {
+        if (rtPortfolio.order) {
+            for (const [id, title] of Object.entries(rtPortfolio.order)) {
                 orders.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.cats) {
-            for (const [id, title] of Object.entries(tlpPortfolio.cats)) {
+        if (rtPortfolio.cats) {
+            for (const [id, title] of Object.entries(rtPortfolio.cats)) {
                 catList.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.alignments) {
-            for (const [id, title] of Object.entries(tlpPortfolio.alignments)) {
+        if (rtPortfolio.alignments) {
+            for (const [id, title] of Object.entries(rtPortfolio.alignments)) {
                 alignments.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.fontWeights) {
-            for (const [id, title] of Object.entries(tlpPortfolio.fontWeights)) {
+        if (rtPortfolio.fontWeights) {
+            for (const [id, title] of Object.entries(rtPortfolio.fontWeights)) {
                 fontWeights.push({
                     value: id,
                     label: title
                 });
             }
         }
-        if (tlpPortfolio.fontSizes) {
-            for (const [id, title] of Object.entries(tlpPortfolio.fontSizes)) {
+        if (rtPortfolio.fontSizes) {
+            for (const [id, title] of Object.entries(rtPortfolio.fontSizes)) {
                 fontSizes.push({
                     value: id,
                     label: title
@@ -275,8 +331,8 @@ registerBlockType('radiustheme/tlp-portfolio', {
                 ,
                 <div className={props.className}>
                     <div>
-                        <span><img src={tlpPortfolio.icon}/></span>
-                        <span> {__('Tlp Portfolio', "tlp-portfolio")}</span>
+                        <span><img src={rtPortfolio.icon}/></span>
+                        <span> {__('TLP Portfolio (Deprecated)', "tlp-portfolio")}</span>
                     </div>
                 </div>
             ]

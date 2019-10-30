@@ -359,7 +359,7 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 			extract( $itemArg );
 			$html = null;
 			$html .= "<div class='tlp-col-lg-{$grid} tlp-col-md-{$grid} tlp-col-sm-6 tlp-col-xs-12 tlp-single-item tlp-grid-item tlp-equal-height'>";
-			$html .= '<div class="tlp-portfolio-item">';
+			$html .= '<div class="tlp-portfolio-item rt-row">';
 			if ( $img ) {
 				$html .= '<div class="tlp-portfolio-thum tlp-item ' . $image_area . '">';
 				$html .= '<figure>';

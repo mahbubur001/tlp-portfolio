@@ -13,12 +13,25 @@
     "start": "cgb-scripts start",
     "build": "cgb-scripts build",
     "eject": "cgb-scripts eject",
-    "prod": "cgb-scripts build && npm run production && rimraf dist;",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "prod": "cgb-scripts build",
+    "production": "cross-env NODE_ENV=production node_modules/.bin/webpack --progress --hide-modules --config=node_modules/laravel-mixcgb-scripts build/setup/webpack.config.js",
+    "package:bundle": "cross-env NODE_ENV=package node_modules/.bin/webpack --progress --hide-modules --config=node_modules/laravel-mixcgb-scripts build/setup/webpack.config.js",
+    "package": "npm run prod && npm run package:bundle",
+    "zip:archive": "cross-env NODE_ENV=zip node_modules/.bin/webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "zip": "npm run package && npm run zip:archive"
   },
   "dependencies": {},
   "devDependencies": {
     "cgb-scripts": "^1.11.0",
-    "laravel-mix": "^2.1.14"
+    "archiver": "^3.1.1",
+    "cli-color": "^1.4.0",
+    "emojic": "^1.1.15",
+    "fs-extra": "^7.0.1",
+    "laravel-mix": "^4.0.15",
+    "node-sass": "^4.10.0",
+    "sass": "^1.19.0",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.6.10",
+    "wp-pot": "^1.7.1"
   }
 }

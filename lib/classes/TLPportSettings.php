@@ -13,17 +13,8 @@ if (!class_exists('TLPportSettings')):
             add_action('wp_ajax_tlpPortSettings', array($this, 'tlpPortSettings'));
             add_filter('plugin_action_links_' . TLP_PORTFOLIO_PLUGIN_ACTIVE_FILE_NAME,
                 array($this, 'tlp_portfolio_marketing'));
-            add_action('admin_notices', array($this, 'deprecated_admin_notice'));
         }
 
-        function deprecated_admin_notice() {
-            $screen = get_current_screen();
-            if (isset($screen->post_type) && ($screen->post_type == TLPPortfolio()->post_type || $screen->post_type == TLPPortfolio()->getScPostType())) {
-                $class = 'notice notice-error is-dismissible';
-                $message = sprintf(__('Our old ShortCode generator is now deprecated, This will be removed end of the year 2019. You should use our latest <a href="%s">ShortCode Generator.</a>', 'tlp-team'), admin_url('edit.php?post_type=' . TLPPortfolio()->getScPostType()));
-                printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), $message);
-            }
-        }
 
         function tlp_portfolio_marketing($links) {
             $links[] = '<a target="_blank" href="' . esc_url('http://demo.radiustheme.com/wordpress/plugins/tlp-portfolio/') . '">Demo</a>';
@@ -71,17 +62,12 @@ if (!class_exists('TLPportSettings')):
          *  TLP menu register
          */
         function tlp_menu_register() {
-            $sc = add_submenu_page('edit.php?post_type=portfolio', __('Shortcode generator', 'tlp-portfolio'),
-                __('ShortCode (Deprecated)', 'tlp-portfolio'), 'administrator', 'tlp_portfolio_sc',
-                array($this, 'tlp_portfolio_sc'));
             $page = add_submenu_page('edit.php?post_type=portfolio', __('TLP Portfolio Settings', 'tlp-portfolio'),
                 __('Settings', 'tlp-portfolio'), 'administrator', 'tlp_portfolio_settings',
                 array($this, 'tlp_portfolio_settings'));
 
             add_action('admin_print_styles-' . $page, array($this, 'tlp_style'));
             add_action('admin_print_scripts-' . $page, array($this, 'tlp_script'));
-            add_action('admin_print_styles-' . $sc, array($this, 'tlp_style'));
-            add_action('admin_print_scripts-' . $sc, array($this, 'tlp_script'));
         }
 
         /**
@@ -107,10 +93,6 @@ if (!class_exists('TLPportSettings')):
          */
         function tlp_portfolio_settings() {
             TLPPortfolio()->render_view('settings');
-        }
-
-        function tlp_portfolio_sc() {
-            TLPPortfolio()->render_view('sc');
         }
 
         public function tlp_portfolio_load_text_domain() {

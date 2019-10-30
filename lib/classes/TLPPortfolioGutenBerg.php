@@ -17,6 +17,10 @@ if (!class_exists( 'TLPPortfolioGutenBerg' )):
                 register_block_type('radiustheme/tlp-portfolio', array(
                     'render_callback' => array($this, 'render_shortcode'),
                 ));
+
+                register_block_type('rt-portfolio/tlp-portfolio-pro', array(
+                    'render_callback' => array($this, 'render_shortcode_pro'),
+                ));
             }
         }
 
@@ -81,6 +85,12 @@ if (!class_exists( 'TLPPortfolioGutenBerg' )):
             return do_shortcode($shortcode);
         }
 
+	    static function render_shortcode_pro( $atts ){
+		    if(!empty($atts['gridId']) && $id = absint($atts['gridId'])){
+			    return do_shortcode( '[tlpportfolio id="' . $id . '"]' );
+		    }
+	    }
+
 
         function block_assets() {
             wp_enqueue_style('wp-blocks');
@@ -95,7 +105,7 @@ if (!class_exists( 'TLPPortfolioGutenBerg' )):
                 $this->version,
                 true
             );
-            wp_localize_script('rt-tlp-portfolio-gb-block-js', 'tlpPortfolio', array(
+            wp_localize_script('rt-tlp-portfolio-gb-block-js', 'rtPortfolio', array(
                 'layout'      => TLPportfolio()->oldScLayouts(),
                 'column'      => TLPportfolio()->scColumns(),
                 'orderby'     => TLPportfolio()->scOrderBy(),
@@ -104,6 +114,7 @@ if (!class_exists( 'TLPPortfolioGutenBerg' )):
                 'fontWeights' => TLPportfolio()->scTextWeight(),
                 'fontSizes'   => TLPportfolio()->scFontSize(),
                 'cats'        => TLPportfolio()->getAllPortFolioCategoryList(),
+	            'short_codes' => TLPportfolio()->get_shortCode_list(),
                 'icon'        => TLPportfolio()->assetsUrl . 'images/portfolio.png',
             ));
             wp_enqueue_style('wp-edit-blocks');

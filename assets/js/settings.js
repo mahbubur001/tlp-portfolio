@@ -9,20 +9,6 @@
             width: '100%'
         });
     }
-    if ($("#scg-wrapper .tlp-color").length) {
-        var cOptions = {
-            defaultColor: false,
-            change: function (event, ui) {
-                createShortCode();
-            },
-            clear: function () {
-                createShortCode();
-            },
-            hide: true,
-            palettes: true
-        };
-        $("#scg-wrapper .tlp-color").wpColorPicker(cOptions);
-    }
 
 
     if ($("#tlp_portfolio_sc_settings_meta .rt-color").length && $.fn.wpColorPicker) {
@@ -57,53 +43,8 @@
     });
 
     imageSize();
-    $(window).on('load', function () {
-        createShortCode();
-    });
     $("#rt-feature-img-size").on('change', function () {
         imageSize();
-    });
-    $("#scg-wrapper").on('change', 'select,input', function () {
-        createShortCode();
-    });
-    $("#scg-wrapper").on('change', 'input:checkbox[name="image"]', function () {
-        createShortCode();
-    });
-    $("#scg-wrapper").on("input propertychange", function () {
-        createShortCode();
-    });
-
-    function createShortCode() {
-        var sc = "[tlpportfolio";
-        $("#scg-wrapper").find('input[name],select[name]').each(function (index, item) {
-            var v = $(this).val(),
-                name = this.name;
-            if (name == "cat[]" || name == "image") {
-                return;
-            }
-            sc = v ? sc + " " + name + "=" + '"' + v + '"' : sc;
-        });
-        var cats = [];
-        $('input:checkbox[name="cat[]"]').each(function () {
-            if ($(this).is(':checked')) {
-                cats.push($(this).val());
-            }
-        });
-        if (cats.length) {
-            sc = sc + ' cat="' + cats.toString() + '"';
-        }
-        if ($('input:checkbox[name="image"]').is(':checked')) {
-            var imgV = $('input:checkbox[name="image"]').val();
-            sc = sc + ' image="' + imgV + '"';
-        }
-
-        sc = sc + "]";
-        $("#sc-output textarea").val(sc);
-    }
-
-    $("#sc-output textarea").on('click', function () {
-        $(this).select();
-        document.execCommand('copy');
     });
 
     function imageSize() {

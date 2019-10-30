@@ -17,7 +17,7 @@ if ( $img ) {
 }
 ?>
 <div class="<?php echo esc_attr( $grid ) ?>">
-    <div class="tlp-portfolio-item">
+    <div class="tlp-portfolio-item rt-row">
 		<?php echo $imgHtml ?>
 		<?php echo sprintf( '<div class="tlp-content2 %s">
                                     <div class="tlp-content-holder">

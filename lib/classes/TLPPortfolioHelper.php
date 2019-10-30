@@ -469,5 +469,21 @@ if (!class_exists('TLPPortfolioHelper')) :
 
         }
 
+	    function get_shortCode_list() {
+		    $scList = array();
+		    $scQ    = get_posts( array(
+			    'post_type'      => TLPPortfolio()->getScPostType(),
+			    'order_by'       => 'title',
+			    'order'          => 'ASC',
+			    'post_status'    => 'publish',
+			    'posts_per_page' => - 1
+		    ) );
+		    if ( ! empty( $scQ ) ) {
+			    $scList = wp_list_pluck( $scQ, 'post_title', 'ID' );
+		    }
+
+		    return $scList;
+	    }
+
     }
 endif;
