@@ -3,20 +3,16 @@ global $TLPportfolio;
 $settings = get_option($TLPportfolio->options['settings']);
 ?>
 <div class="wrap">
-
-    <div id="upf-icon-edit-pages" class="icon32 icon32-posts-page"><br/></div>
-    <h2><?php _e('TLP Portfolio Settings', 'tlp-portfolio') ?></h2>
-    <div class="tlp-content-holder">
-        <div class="tch-left">
+    <h2><?php esc_html_e('TLP Portfolio Settings', 'tlp-portfolio') ?></h2>
+    <div class="rt-settings-container">
+        <div class="rt-setting-content">
             <form id="tlp-portfolio-settings">
-
-                <h3><?php _e('General settings', 'tlp-portfolio'); ?></h3>
-
+                <h3><?php esc_html_e('General settings', 'tlp-portfolio'); ?></h3>
                 <table class="form-table">
-
                     <tr>
                         <th scope="row"><label
-                                    for="primary-color"><?php _e('Primary Color', 'tlp-portfolio'); ?></label></th>
+                                    for="primary-color"><?php esc_html_e('Primary Color', 'tlp-portfolio'); ?></label>
+                        </th>
                         <td class="">
                             <input name="primary_color" id="primary_color" type="text"
                                    value="<?php echo(isset($settings['primary_color']) ? ($settings['primary_color'] ? $settings['primary_color'] : '#0367bf') : '#0367bf'); ?>"
@@ -24,7 +20,8 @@ $settings = get_option($TLPportfolio->options['settings']);
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="imgWidth"><?php _e('Image Size', 'tlp-portfolio'); ?></label></th>
+                        <th scope="row"><label
+                                    for="imgWidth"><?php esc_html_e('Image Size', 'tlp-portfolio'); ?></label></th>
                         <td>
                             <select id="rt-feature-img-size" name="feature_img_size">
                                 <?php
@@ -65,18 +62,18 @@ $settings = get_option($TLPportfolio->options['settings']);
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="slug"><?php _e('Slug', 'tlp-portfolio'); ?></label></th>
+                        <th scope="row"><label for="slug"><?php esc_html_e('Slug', 'tlp-portfolio'); ?></label></th>
                         <td class="">
                             <input name="slug" id="slug" type="text"
                                    value="<?php echo(isset($settings['slug']) ? ($settings['slug'] ? sanitize_title_with_dashes($settings['slug']) : 'portfolio') : 'portfolio'); ?>"
                                    size="8" class="">
-                            <p class="description"><?php _e('Slug configuration', 'tlp-portfolio'); ?></p>
+                            <p class="description"><?php esc_html_e('Slug configuration', 'tlp-portfolio'); ?></p>
                         </td>
                     </tr>
 
                     <tr>
                         <th scope="row"><label
-                                    for="link_detail_page"><?php _e('Link To Detail Page', 'tlp-portfolio'); ?></label>
+                                    for="link_detail_page"><?php esc_html_e('Link To Detail Page', 'tlp-portfolio'); ?></label>
                         </th>
                         <td class="">
                             <fieldset>
@@ -99,7 +96,7 @@ $settings = get_option($TLPportfolio->options['settings']);
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="css"><?php _e('Social Share To Detail Page', 'tlp-portfolio'); ?></label>
+                                    for="css"><?php esc_html_e('Social Share To Detail Page', 'tlp-portfolio'); ?></label>
                         </th>
                         <td>
                             <fieldset>
@@ -107,12 +104,13 @@ $settings = get_option($TLPportfolio->options['settings']);
                                 <label for="social_share_enable">
                                     <input name="social_share_enable" type="checkbox" id="social_share_enable" value="1"
                                         <?php checked(1, isset($settings['social_share_enable']) ? 1 : 0) ?> />
-                                    <?php _e('Enable', 'tlp-portfolio') ?></label>
+                                    <?php esc_html_e('Enable', 'tlp-portfolio') ?></label>
                             </fieldset>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="css"><?php _e('Custom Css', 'tlp-portfolio'); ?></label></th>
+                        <th scope="row"><label for="css"><?php esc_html_e('Custom Css', 'tlp-portfolio'); ?></label>
+                        </th>
                         <td>
 							<textarea name="custom_css" cols="40"
                                       rows="6"><?php echo(isset($settings['custom_css']) ? ($settings['custom_css'] ? $settings['custom_css'] : null) : null); ?></textarea>
@@ -120,39 +118,16 @@ $settings = get_option($TLPportfolio->options['settings']);
                     </tr>
 
                 </table>
-                <p class="submit"><input type="submit" name="submit" id="tlpSaveButton" class="button button-primary"
-                                         value="<?php _e('Save Changes', 'tlp-portfolio'); ?>"></p>
+                <p class="submit"><input type="submit" name="submit" id="tlpSaveButton"
+                                         class="rt-admin-btn button button-primary"
+                                         value="<?php esc_html_e('Save Changes', 'tlp-portfolio'); ?>"></p>
 
                 <?php wp_nonce_field($TLPportfolio->nonceText(), 'tlp_nonce'); ?>
             </form>
             <div id="response" class="updated"></div>
         </div>
-        <div class="tch-right">
-            <div id="pro-feature" class="postbox">
-                <div class="handlediv" title="Click to toggle"><br></div>
-                <h3 class="hndle ui-sortable-handle"><span>TLP Portfolio Pro</span></h3>
-                <div class="inside">
-                    <?php echo $TLPportfolio->proFeatureList(); ?>
-                </div>
-            </div>
+        <div class="rt-pro-feature-content">
+            <?php $TLPportfolio->rt_plugin_portfolio_sc_pro_information('settings'); ?>
         </div>
     </div>
-
-    <div class="tlp-help">
-        <p style="font-weight: bold"><?php _e('Short Code', 'tlp-portfolio'); ?> :</p>
-        <code>[tlpportfolio col="2" number="4" cat="5,78" orderby="title" order="ASC" layout="1"]</code><br>
-        <p><?php _e('col = The number of column you want to create (1,2,3,4)', 'tlp-portfolio'); ?></p>
-        <p><?php _e('number = The number of the portfolio, you want to display', 'tlp-portfolio'); ?></p>
-        <p><?php _e('orderby = Orderby (title , date, menu_order)', 'tlp-portfolio'); ?></p>
-        <p><?php _e('layout = Layout (1,2,3,isotope)', 'tlp-portfolio'); ?></p>
-        <p><?php _e('cat = Category id', 'tlp-portfolio'); ?></p>
-        <p><?php _e('order = ASC, DESC', 'tlp-portfolio'); ?></p>
-        <p class="tlp-help-link"><a class="button-primary"
-                                    href="http://demo.radiustheme.com/wordpress/plugins/tlp-portfolio/"
-                                    target="_blank"><?php _e('Demo', 'tlp-portfolio'); ?></a> <a
-                    class="button-primary"
-                    href="https://radiustheme.com/how-to-setup-and-configure-tlp-portfolio-free-version-for-wordpress/"
-                    target="_blank"><?php _e('Documentation', 'tlp-portfolio'); ?></a></p>
-    </div>
-
 </div>

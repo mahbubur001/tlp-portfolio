@@ -329,17 +329,17 @@ if (!class_exists('TLPPortfolioHelper')) :
         function socialShare($pLink) {
             $html = null;
             $html .= "<div class='single-portfolio-share'>
-                        <div class='fb-share'>
+                        <div class='fb-share rt-share-item'>
                             <div class='fb-share-button' data-href='{$pLink}' data-layout='button_count'></div>
                         </div>
-                        <div class='twitter-share'>
+                        <div class='twitter-share rt-share-item'>
                             <a href='{$pLink}' class='twitter-share-button'{count} data-url='https://about.twitter.com/resources/buttons#tweet'>Tweet</a>
                         </div>
                         
-                        <div class='linkedin-share'>
+                        <div class='linkedin-share rt-share-item'>
                             <script type='IN/Share' data-counter='right'></script>
                         </div>
-                        <div class='googleplus-share'>
+                        <div class='googleplus-share rt-share-item'>
                             <div class='g-plusone'></div>
                         </div>
                    </div>";
@@ -361,7 +361,7 @@ if (!class_exists('TLPPortfolioHelper')) :
         }
 
         function proFeatureList() {
-            $html = '<ol>
+            return '<ol>
                         <li>Full Responsive & Mobile Friendly</li>
                         <li>57 Layouts (Even Grid, Masonry Grid, Even Isotope, Masonry Isotope & Carousel Slider)</li>
                         <li>Unlimited Layouts Variation</li>
@@ -385,7 +385,6 @@ if (!class_exists('TLPPortfolioHelper')) :
                     </ol>
                     <p><a href="https://radiustheme.com/tlp-portfolio-pro-for-wordpress/" class="button button-primary" target="_blank">Get Pro Version</a></p>';
 
-            return $html;
         }
 
 
@@ -469,21 +468,21 @@ if (!class_exists('TLPPortfolioHelper')) :
 
         }
 
-	    function get_shortCode_list() {
-		    $scList = array();
-		    $scQ    = get_posts( array(
-			    'post_type'      => TLPPortfolio()->getScPostType(),
-			    'order_by'       => 'title',
-			    'order'          => 'ASC',
-			    'post_status'    => 'publish',
-			    'posts_per_page' => - 1
-		    ) );
-		    if ( ! empty( $scQ ) ) {
-			    $scList = wp_list_pluck( $scQ, 'post_title', 'ID' );
-		    }
+        function get_shortCode_list() {
+            $scList = array();
+            $scQ = get_posts(array(
+                'post_type'      => TLPPortfolio()->getScPostType(),
+                'order_by'       => 'title',
+                'order'          => 'ASC',
+                'post_status'    => 'publish',
+                'posts_per_page' => -1
+            ));
+            if (!empty($scQ)) {
+                $scList = wp_list_pluck($scQ, 'post_title', 'ID');
+            }
 
-		    return $scList;
-	    }
+            return $scList;
+        }
 
     }
 endif;

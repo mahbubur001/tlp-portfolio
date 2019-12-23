@@ -245,6 +245,11 @@ if ( ! class_exists( 'PortfolioInitRegister' ) ):
 			foreach ($styles as $k => $v) {
 				wp_register_style($k, $v, false, $version);
 			}
+            wp_localize_script('tlp-portfolio-admin', 'tlp_portfolio_obj', array(
+                'ajaxurl' => admin_url('admin-ajax.php '),
+                'nonce'   => wp_create_nonce(TLPPortfolio()->nonceText()),
+                'nonceId' => TLPPortfolio()->nonceId()
+            ));
 		}
 
 	}

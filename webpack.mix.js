@@ -4,8 +4,6 @@ const path = require("path");
 const cliColor = require("cli-color");
 const emojic = require("emojic");
 const wpPot = require('wp-pot');
-const os = require('os');
-const archiver = require('archiver');
 
 
 const package_path = path.resolve(__dirname);
@@ -55,30 +53,5 @@ if (process.env.NODE_ENV === 'production') {
     }
 
 
-    mix.js(`dist/blocks.build.js`, `assets/js/tlp-portfolio-blocks.min.js`);
-}
-
-if (process.env.NODE_ENV === 'zip') {
-    const sourcePath = `${package_path}/${package_slug}.zip`;
-    const desktop = os.homedir() + '/Desktop';
-    const destinationPath = `${desktop}/${package_slug}.zip`;
-    const output = fs.createWriteStream(sourcePath);
-    const archive = archiver('zip');
-    output.on('close', function () {
-        console.log(archive.pointer() + ' total bytes');
-        console.log('Archive has been finalized and the output file descriptor has closed.');
-        fs.removeSync(`${package_path}/${package_slug}`);
-        fs.move(sourcePath, destinationPath, err => {
-            if (err) return console.error(err);
-            console.log('success!')
-        });
-    });
-
-    archive.on('error', function (err) {
-        throw err;
-    });
-
-    archive.pipe(output);
-    archive.directory(`${package_path}/${package_slug}`, '');
-    archive.finalize();
+    // mix.js(`dist/blocks.build.js`, `assets/js/tlp-portfolio-blocks.min.js`);
 }

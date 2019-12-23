@@ -810,18 +810,19 @@ img.mfp-img {
 }
 
 .single-portfolio-share {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
 }
 
-.single-portfolio-share div {
-    float: left;
-    display: inline-block;
-    margin-right: 5px;
+.single-portfolio-share iframe {
+    margin: 0;
 }
 
-.single-portfolio-share .twitter-share,
-.single-portfolio-share .linkedin-share {
-    margin-top: 8px;
+.single-portfolio-share .rt-share-item + .rt-share-item {
+    margin-left: 5px;
 }
+
 
 .tlp-portfolio-container a {
     text-decoration: none;

@@ -88,7 +88,7 @@
     }
 
     function useEffectDetailLink() {
-        var item = $(".field-holder.pfp-detail-page-link-item");
+        var item = $(".rt-field-wrapper.pfp-detail-page-link-item");
         if ($("#pfp_detail_page_link").is(":checked")) {
             item.show();
         } else {
@@ -106,7 +106,7 @@
                 item.hide();
             }
         } else {
-            $(".field-holder.pfp-detail-page-link-item").hide();
+            $(".rt-field-wrapper.pfp-detail-page-link-item").hide();
         }
     }
 
@@ -119,8 +119,8 @@
             isIsotope = layout.match(/^isotope/i);
             $("#pfp_carousel_autoplay_timeout_holder").hide();
             if (isCarousel) {
-                $(".field-holder.pfp-carousel-item").show();
-                $(".field-holder.pfp-isotope-item,.field-holder.pagination, #pfp_column_holder").hide();
+                $(".rt-field-wrapper.pfp-carousel-item").show();
+                $(".rt-field-wrapper.pfp-isotope-item,.rt-field-wrapper.pagination, #pfp_column_holder").hide();
 
                 var autoPlay = $("#pfp_carousel_options-autoplay").prop("checked");
                 if (autoPlay) {
@@ -128,19 +128,19 @@
                 }
 
             } else if (isIsotope) {
-                $(".field-holder.pfp-isotope-item,.field-holder.pagination,#pfp_column_holder").show();
-                $(".field-holder.pfp-carousel-item").hide();
+                $(".rt-field-wrapper.pfp-isotope-item,.rt-field-wrapper.pagination,#pfp_column_holder").show();
+                $(".rt-field-wrapper.pfp-carousel-item").hide();
             } else {
-                $(".field-holder.pfp-isotope-item,.field-holder.pfp-carousel-item").hide();
-                $(".field-holder.pagination, #pfp_column_holder").show();
+                $(".rt-field-wrapper.pfp-isotope-item,.rt-field-wrapper.pfp-carousel-item").hide();
+                $(".rt-field-wrapper.pagination, #pfp_column_holder").show();
             }
         }
 
 
         if ($("#pfp_pagination").is(':checked') && !isCarousel) {
-            $(".field-holder.pfp-pagination-item").show();
+            $(".rt-field-wrapper.pfp-pagination-item").show();
         } else {
-            $(".field-holder.pfp-pagination-item").hide();
+            $(".rt-field-wrapper.pfp-pagination-item").hide();
         }
 
         useEffectImageSize();
@@ -222,9 +222,9 @@
     });
     $("#pfp_pagination").on('change', function () {
         if (this.checked) {
-            $(".field-holder.pfp-pagination-item").show();
+            $(".rt-field-wrapper.pfp-pagination-item").show();
         } else {
-            $(".field-holder.pfp-pagination-item").hide();
+            $(".rt-field-wrapper.pfp-pagination-item").hide();
         }
     });
 
