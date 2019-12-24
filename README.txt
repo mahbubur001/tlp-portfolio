@@ -3,7 +3,7 @@ Contributors: techlabpro1
 Donate link:
 Tags: portfolio, portfolio plugin, wordpress portfolio plugin, filterable portfolio, best portfolio, best wp portfolio, gallery, portfolio gallery, photo gallery, image display, creative portfolio, portfolio display, portfolio slider, responsive portfolio, portfolio showcase.
 Requires at least: 4
-Tested up to: 5.2
+Tested up to: 5.3
 Stable tag: 2.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html

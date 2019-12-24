@@ -514,7 +514,7 @@ msgid "Layout Preview"
 msgstr ""
 
 #: ../lib/classes/TLPPortfolioSCMeta.php:77
-msgid "Pro Feature"
+msgid "Pro Documentation"
 msgstr ""
 
 #: ../lib/classes/TLPPortfolioSCMeta.php:121

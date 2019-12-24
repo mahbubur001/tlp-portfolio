@@ -74,7 +74,7 @@ if (!class_exists('TLPPortfolioSCMeta')):
                 'high');
             add_meta_box(
                 'rt_plugin_portfolio_sc_pro_information',
-                __('Pro Feature', 'tlp-portfolio'),
+                __('Pro Documentation', 'tlp-portfolio'),
                 array($this, 'rt_plugin_portfolio_sc_pro_information'),
                 TLPPortfolio()->getScPostType(),
                 'side');

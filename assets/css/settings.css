@@ -104,11 +104,10 @@
 body .rt-admin-btn,
 body .rt-admin-btn.button-primary {
     text-align: center;
-    background-color: #5d3dfd;
     display: inline-block;
     font-size: 15px;
     font-weight: 400;
-    color: #ffffff;
+    color: #5d3dfd;
     text-decoration: none;
     padding: 9px 18px;
     border-radius: 4px;
@@ -117,6 +116,7 @@ body .rt-admin-btn.button-primary {
     line-height: 1.4;
     transition: all 0.3s ease-in-out;
     height: auto;
+    border: 2px solid #5d3dfd;
 }
 
 body .rt-admin-btn.button-primary,
@@ -476,15 +476,6 @@ input.large-text.code.tlp-code-sc {
     padding: 11px;
 }
 
-.rt-help-link {
-    background: #fff;
-    padding: 35px 25px;
-    display: flex;
-    justify-content: center;
-}
-.rt-help-link a + a {
-    margin-left: 5px !important;
-}
 .rt-settings-container {
     display: flex;
     flex-wrap: wrap;
@@ -496,6 +487,7 @@ input.large-text.code.tlp-code-sc {
 
 .rt-pro-feature-content {
     flex: 0 0 350px;
+
 }
 
 .rt-settings-container #response {
