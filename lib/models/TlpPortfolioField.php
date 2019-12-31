@@ -65,6 +65,7 @@ if (!class_exists('TlpPortfolioField')):
             $this->alignment = isset($attr['alignment']) ? ($attr['alignment'] ? $attr['alignment'] : null) : null;
             $this->blank = isset($attr['blank']) && !empty($attr['blank']) ? $attr['blank'] : null;
             $this->alpha = isset($attr['alpha']) && !empty($attr['alpha']) ? true : false;
+            $this->class       = $this->class ? $this->class . " rt-form-control" : "rt-form-control";
         }
 
         /**

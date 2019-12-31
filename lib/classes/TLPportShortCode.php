@@ -308,9 +308,9 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 					}
 				} else {
 					if ( $preview ) {
-						$msg = __( 'Session Error !!', 'tlp - team' );
+						$msg = __( 'Session Error !!', 'tlp-portfolio' );
 					} else {
-						$html .= "<p>" . __( "No shortCode found", 'tlp - team' ) . "</p>";
+						$html .= "<p>" . __( "No shortCode found", 'tlp-portfolio' ) . "</p>";
 					}
 				}
 				if ( $preview ) {
