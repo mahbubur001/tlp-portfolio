@@ -16,7 +16,7 @@ Portfolio is Fully Responsive and Mobile Friendly portfolio plugin for WordPress
 
 Portfolio is a fully responsive plugin that display your company or personal portfolio/ Gallery items. From admin panel you can easily add your portfolio items. It has widget included with carousel slider with different settings how many want to display total or at a time and many more. It has the different custom fields Short Description, Project URL, Tags, Tools/ Technique used.
 
-[youtube https://www.youtube.com/watch?v=ysuCz5a6ppg]
+[youtube https://www.youtube.com/watch?v=tuOnwHWkgPQ]
 
 It is HTML5 & CSS3 base coding. Display your portfolio items/ Gallery with Grid view using our shortcode and widget. It come with 4 default layout in shortCode you can call layout like layout="1" / layout="2" /layout="3" / layout="isotope"
 
