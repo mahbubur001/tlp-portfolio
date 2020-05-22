@@ -263,19 +263,17 @@ if ( ! class_exists( 'TLPportShortCode' ) ):
 							}
 							$short_d        = get_post_meta( $iID, 'short_description', true );
 							$arg['short_d'] = TLPPortfolio()->get_short_description( $short_d, $excerpt_limit );
-							if ( $isIsotope ) {
-								$catClass  = null;
-								$catAs     = wp_get_post_terms( $iID, TLPPortfolio()->taxonomies['category'], array( "fields" => "all" ) );
-								$deptClass = null;
-								if ( ! empty( $catAs ) ) {
-									foreach ( $catAs as $cat ) {
-										$catClass .= " " . $cat->slug;
-									}
-								}
-								if ( $catClass ) {
-									$arg['grid'] .= $catClass;
-								}
-							}
+                            if ( $isIsotope ) {
+                                $termAs     = wp_get_post_terms( $iID, TLPPortfolio()->taxonomies['category'], array( "fields" => "all" ) );
+                                $isoFilter = null;
+                                if ( ! empty( $termAs ) ) {
+                                    foreach ( $termAs as $term ) {
+                                        $isoFilter .= " " . "iso_" . $term->term_id;
+                                        $isoFilter .= " " . $term->slug;
+                                    }
+                                }
+                                $arg['isoFilter'] = $isoFilter;
+                            }
 
 							if ( $disable_image ) {
 								$arg['content_area'] = "tlp-col-md-12";

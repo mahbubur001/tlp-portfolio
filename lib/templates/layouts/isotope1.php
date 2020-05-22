@@ -15,6 +15,7 @@ if ( $img ) {
 				null )
 			: null );
 }
+$grid = $grid . $isoFilter;
 ?>
 <div class="<?php echo esc_attr( $grid ) ?>">
     <div class="tlp-portfolio-item">

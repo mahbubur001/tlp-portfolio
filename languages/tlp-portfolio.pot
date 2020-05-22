@@ -1,4 +1,4 @@
-# Copyright (C) 2019 TLP Portfolio
+# Copyright (C) 2020 TLP Portfolio
 # This file is distributed under the same license as the TLP Portfolio package.
 msgid ""
 msgstr ""
@@ -541,12 +541,20 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../lib/classes/TLPportShortCode.php:238, ../lib/classes/TLPportShortCode.php:681
+#: ../lib/classes/TLPportShortCode.php:238, ../lib/classes/TLPportShortCode.php:679
 msgid "Show all"
 msgstr ""
 
-#: ../lib/classes/TLPportShortCode.php:307
+#: ../lib/classes/TLPportShortCode.php:305
 msgid "No portfolio found"
+msgstr ""
+
+#: ../lib/classes/TLPportShortCode.php:309
+msgid "Session Error !!"
+msgstr ""
+
+#: ../lib/classes/TLPportShortCode.php:311
+msgid "No shortCode found"
 msgstr ""
 
 #: ../lib/vendor/TlpPortfolioElementorWidget.php:11
