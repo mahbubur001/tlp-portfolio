@@ -1,17 +1,40 @@
 <?php
+/**
+ * @var string $img
+ * @var string $link
+ * @var string $item_link
+ * @var string $link_target
+ * @var string $title
+ * @var string $imgFull
+ * @var string $grid
+ * @var string $isoFilter
+ * @var string $short_d
+ */
 $imgHtml = null;
 if ( $img ) {
 	$imgHtml = sprintf( '<div class="tlp-portfolio-thum tlp-item">
-                <img class="img-responsive" src="%s" title="%s">
+                %s
                 <div class="tlp-overlay">
                     <p class="link-icon">
                         <a class="tlp-zoom" href="%s"><i class="fa fa-search-plus"></i></a>
-                        %
+                        %s
                    </p>
                 </div>
-            </div>', $img, $title, $imgFull,
+            </div>',
 		$link ?
-			sprintf( '<a href="%s"%s><i class="fa fa-external-link"></i></a>', $item_link, $link_target ? " target='{$link_target}'" :
+			sprintf( '<a href="%s"%s><img class="img-responsive" src="%s" title="%s"></a>',
+				esc_url( $item_link ),
+				$link_target ? " target='{$link_target}'" : '',
+				esc_url( $img ),
+				esc_attr( $title )
+			) :
+			sprintf( '<img class="img-responsive" src="%s" title="%s"></a>',
+				esc_url( $img ),
+				esc_attr( $title )
+			),
+		esc_url( $imgFull ),
+		$link ?
+			sprintf( '<a href="%s"%s><i class="fa fa-external-link"></i></a>', esc_url( $item_link ), $link_target ? " target='{$link_target}'" :
 				null )
 			: null );
 }
