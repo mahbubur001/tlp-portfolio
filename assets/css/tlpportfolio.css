@@ -1472,9 +1472,12 @@ img.mfp-img {
 }
 
 .tlp-portfolio .button-group {
-    margin: 15px;
+    margin: 10px;
     text-align: center;
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .tlp-portfolio button {
@@ -1484,7 +1487,7 @@ img.mfp-img {
     border-radius: 2px;
     font-size: 16px;
     font-weight: 300;
-    margin-right: 5px;
+    margin: 5px;
     border: none;
 }
 

@@ -28,7 +28,7 @@ if ( $img ) {
 				esc_url( $img ),
 				esc_attr( $title )
 			) :
-			sprintf( '<img class="img-responsive" src="%s" title="%s"></a>',
+			sprintf( '<img class="img-responsive" src="%s" alt="%s"></a>',
 				esc_url( $img ),
 				esc_attr( $title )
 			),

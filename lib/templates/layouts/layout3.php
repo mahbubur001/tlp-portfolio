@@ -1,8 +1,21 @@
 <?php
+/**
+ * @var string $img
+ * @var string $link
+ * @var string $item_link
+ * @var string $link_target
+ * @var string $title
+ * @var string $imgFull
+ * @var string $grid
+ * @var string $isoFilter
+ * @var string $short_d
+ * @var string $image_area
+ * @var string $content_area
+ */
 $imgHtml = null;
 if ( $img ) {
 	$imgHtml = sprintf( '<div class="tlp-portfolio-thum tlp-item">
-                <img class="img-responsive" src="%s" title="%s">
+                <img class="img-responsive" src="%s" alt="%s">
                 <div class="tlp-overlay">
                     <p class="link-icon">
                         <a class="tlp-zoom" href="%s"><i class="fa fa-search-plus"></i></a>
