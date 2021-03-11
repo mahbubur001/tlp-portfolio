@@ -14,9 +14,9 @@ if (!class_exists( 'TLPPortfolioGutenBerg' )):
             add_action('enqueue_block_assets', array($this, 'block_assets'));
             add_action('enqueue_block_editor_assets', array($this, 'block_editor_assets'));
             if (function_exists('register_block_type')) {
-                register_block_type('radiustheme/tlp-portfolio', array(
-                    'render_callback' => array($this, 'render_shortcode'),
-                ));
+//                register_block_type('radiustheme/tlp-portfolio', array(
+//                    'render_callback' => array($this, 'render_shortcode'),
+//                ));
 
                 register_block_type('rt-portfolio/tlp-portfolio-pro', array(
                     'render_callback' => array($this, 'render_shortcode_pro'),
