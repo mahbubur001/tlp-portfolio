@@ -2,9 +2,9 @@
 Contributors: techlabpro1
 Donate link:
 Tags: portfolio, portfolio plugin, wordpress portfolio plugin, filterable portfolio, best portfolio, best wp portfolio, gallery, portfolio gallery, photo gallery, image display, creative portfolio, portfolio display, portfolio slider, responsive portfolio, portfolio showcase.
-Requires at least: 4
-Tested up to: 5.6
-Stable tag: 2.7.2
+Requires at least: 4.3
+Tested up to: 5.7
+Stable tag: 2.7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -186,6 +186,9 @@ For any bug or suggestion please mail us: support@radiustheme.com
 
 
 == Changelog ==
+
+= 2.7.3 =
+* Add WordPress 5.7 Compatibility
 
 = 2.7.2 =
 * Update Image alt tage and sanitize some code

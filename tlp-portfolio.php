@@ -4,7 +4,7 @@
  * Plugin URI: http://demo.radiustheme.com/wordpress/plugins/tlp-portfolio/
  * Description: Portfolio is Fully Responsive and Mobile Friendly portfolio for WordPress to display your portfolio work in Grid and Isotope Views.
  * Author: RadiusTheme
- * Version: 2.7.2
+ * Version: 2.7.3
  * Author URI: https://radiustheme.com
  * Tag: portfolio, portfolio plugin,filterable portfolio, portfolio gallery, portfolio display, portfolio slider, responsive portfolio, portfolio showcase, wp portfolio
  * Text Domain: tlp-portfolio
