@@ -139,16 +139,21 @@ if (!class_exists('TLPPortfolioHelper')) :
         }
 
         function getFeatureImageSrc($post_id = null, $fImgSize = 'team-thumb', $customImgSize = array()) {
-            $imgSrc = null;
-            $cSize = false;
+            global $post;
+            $img_class  = "img-responsive";
+            $post_id    = ( $post_id ? absint( $post_id ) : $post->ID );
+            $alt        = esc_url( get_the_title( $post_id ) );
+            $imgSrc     = $image = null;
+            $cSize      = false;
             if ($fImgSize == 'rt_custom') {
                 $fImgSize = 'full';
                 $cSize = true;
             }
 
             if ($aID = get_post_thumbnail_id($post_id)) {
-                $image = wp_get_attachment_image_src($aID, $fImgSize);
-                $imgSrc = $image[0];
+                $image = wp_get_attachment_image($aID, $fImgSize, '', array( "class" => $img_class ));
+                $imageS = wp_get_attachment_image_src($aID, $fImgSize);
+                $imgSrc = $imageS[0];
             }
 
             if ($imgSrc && $cSize) {
@@ -158,10 +163,11 @@ if (!class_exists('TLPPortfolioHelper')) :
                 $c = (!empty($customImgSize['crop']) && $customImgSize['crop'] == 'soft' ? false : true);
                 if ($w && $h) {
                     $imgSrc = $TLPportfolio->rtImageReSize($imgSrc, $w, $h, $c);
+                    $image  = "<img alt='{$alt}' width='{$w}' height='{$h}' class='{$img_class}' src='{$imgSrc}' />";
                 }
             }
 
-            return $imgSrc;
+            return $image;
         }
 
         function rtImageReSize($url, $width = null, $height = null, $crop = null, $single = true, $upscale = false) {

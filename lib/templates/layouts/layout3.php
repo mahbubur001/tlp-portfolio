@@ -15,14 +15,14 @@
 $imgHtml = null;
 if ( $img ) {
 	$imgHtml = sprintf( '<div class="tlp-portfolio-thum tlp-item">
-                <img class="img-responsive" src="%s" alt="%s">
+                %s
                 <div class="tlp-overlay">
                     <p class="link-icon">
                         <a class="tlp-zoom" href="%s"><i class="fa fa-search-plus"></i></a>
                         %s
                    </p>
                 </div>
-            </div>', $img, $title, $imgFull,
+            </div>', wp_kses_post($img), $imgFull,
 		$link ?
 			sprintf( '<a href="%s"%s><i class="fa fa-external-link"></i></a>', $item_link, $link_target ? " target='{$link_target}'" :
 				null )

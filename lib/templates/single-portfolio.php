@@ -23,6 +23,5 @@ $settings    = get_option( TLPPortfolio()->options['settings'] );
 				echo TLPPortfolio()->socialShare( get_the_permalink() );
 			} ?>
         </div>
-
     </div>
 </div>

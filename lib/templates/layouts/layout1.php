@@ -13,7 +13,7 @@
 $imgHtml = null;
 if ($img) {
     $imgHtml = sprintf('<div class="tlp-portfolio-thum tlp-item">
-                <img class="img-responsive" src="%s" alt="%s">
+                %s
                 <div class="tlp-overlay">
                     <p class="link-icon">
                         <a class="tlp-zoom" href="%s"><i class="fa fa-search-plus"></i></a>
@@ -21,8 +21,7 @@ if ($img) {
                    </p>
                 </div>
             </div>',
-        esc_url($img),
-        esc_attr($title),
+        wp_kses_post($img),
         esc_url($imgFull),
         $link ? sprintf('<a href="%s"%s><i class="fa fa-external-link"></i></a>', esc_url($item_link), $link_target ? " target='{$link_target}'" : null) : null
     );

@@ -22,15 +22,13 @@ if ( $img ) {
                 </div>
             </div>',
 		$link ?
-			sprintf( '<a href="%s"%s><img class="img-responsive" src="%s" title="%s"></a>',
+			sprintf( '<a href="%s"%s>%s</a>',
 				esc_url( $item_link ),
 				$link_target ? " target='{$link_target}'" : '',
-				esc_url( $img ),
-				esc_attr( $title )
+                wp_kses_post( $img )
 			) :
-			sprintf( '<img class="img-responsive" src="%s" alt="%s"></a>',
-				esc_url( $img ),
-				esc_attr( $title )
+			sprintf( '%s</a>',
+				wp_kses_post( $img )
 			),
 		esc_url( $imgFull ),
 		$link ?

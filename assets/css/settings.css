@@ -526,6 +526,12 @@ input.large-text.code.tlp-code-sc {
     box-sizing: border-box;
 }
 
+#pfp_overlay_color_holder .wp-picker-container .color-alpha,
+#pfp_primary_color_holder .wp-picker-container .color-alpha {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 /* ------------------------------------------------------------------------- *
  *  Media Query
 /* ------------------------------------------------------------------------- */
